@@ -186,7 +186,8 @@ export function getPayloadSlack(inputs: Readonly<TInputs>): Object {
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text: `${description ? `Description: ${description}\n` : ''}Repository: <${repoURL}|${owner}/${repo}>.\nRef: ${ref}.\n${eventFieldTitle}: ${eventDetail}.\nTriggered by: ${actor}.\nWorkflow: <${workflowURL}|${workflow}>`,
+        text: 'AA'
+        // text: `${description ? `Description: ${description}\n` : ''}Repository: <${repoURL}|${owner}/${repo}>.\nRef: ${ref}.\n${eventFieldTitle}: ${eventDetail}.\nTriggered by: ${actor}.\nWorkflow: <${workflowURL}|${workflow}>`,
       },
     }
   ]
