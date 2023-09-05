@@ -1,5 +1,5 @@
-name: 'Generate Changelog action'
-description: 'Generate Changelog action'
+name: 'Github Action Notification'
+description: 'Github Action Notification with Discord and Slack'
 author: 'hunghg255'
 branding:
   icon: "package"
@@ -15,5 +15,11 @@ inputs:
     required: false
   slack_webhook:
     description: 'Slack webhook url.'
+    required: false
+  title:
+    description: 'Title of notification.'
+    required: false
+  description:
+    description: 'Description of notification.'
     required: false
 

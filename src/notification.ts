@@ -9,11 +9,11 @@ export class Notification {
 
   sendDiscordNotification() {
     console.log('Sending Discord notification');
-    console.log(this.inputs.discord_webhook);
+    console.log(this.inputs);
   }
 
   sendSlackNotification() {
     console.log('Sending Slack notification');
-    console.log(this.inputs.slack_webhook);
+    console.log(this.inputs);
   }
 }

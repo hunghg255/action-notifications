@@ -1,4 +1,4 @@
-import {  setFailed } from '@actions/core'
+import { setFailed } from '@actions/core'
 import { getInputs } from './utils';
 import { Notification } from './notification';
 
@@ -13,11 +13,11 @@ function main() {
     }
 
     if (inputs.discord_webhook) {
-      return notification.sendDiscordNotification();
+      notification.sendDiscordNotification();
     }
 
     if (inputs.slack_webhook) {
-      return notification.sendSlackNotification();
+      notification.sendSlackNotification();
     }
 
   } catch (error: any) {
