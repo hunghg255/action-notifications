@@ -29,10 +29,23 @@ export class Notification {
 
   sendSlackNotification() {
     try {
-      const payload = getPayloadSlack(this.inputs);
+      // const payload = getPayloadSlack(this.inputs);
+      const blocks = [];
+      blocks.push({
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: `*11`,
+        },
+      });
+
+    const payload = {
+      username: 'Test',
+      blocks,
+    };
       return axios.post(this.inputs.slack_webhook as string, payload, {
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
         },
       });
     } catch (e: any) {
