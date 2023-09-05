@@ -30,9 +30,11 @@ export class Notification {
 
   sendSlackNotification() {
     try {
-      const payload = getPayloadSlack(this.inputs);
+      // const payload = getPayloadSlack(this.inputs);
 
-      return axios.post(this.inputs.slack_webhook as string, payload, {
+      return axios.post(this.inputs.slack_webhook as string,  {
+        text: 'Hello World !'
+      }, {
         headers: {
           'Content-Type': 'application/json'
         },
