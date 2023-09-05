@@ -30,27 +30,15 @@ export class Notification {
 
   sendSlackNotification() {
     try {
-      // const payload = getPayloadSlack(this.inputs);
-      const blocks = [];
-      blocks.push({
-        type: 'section',
-        text: {
-          type: 'mrkdwn',
-          text: `*11`,
-        },
-      });
+      const payload = getPayloadSlack(this.inputs);
 
-    const payload = {
-      username: 'Test',
-      blocks,
-    };
       return axios.post(this.inputs.slack_webhook as string, payload, {
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+          'Content-Type': 'application/json'
         },
       });
     } catch (e: any) {
-      setFailed('ERROR')
+      setFailed('ERROR');
 
       // if (e.response) {
       //   logError(
