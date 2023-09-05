@@ -186,8 +186,7 @@ export function getPayloadSlack(inputs: Readonly<TInputs>): Object {
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text: 'AA'
-        // text: `${description ? `Description: ${description}\n` : ''}Repository: <${repoURL}|${owner}/${repo}>.\nRef: ${ref}.\n${eventFieldTitle}: ${eventDetail}.\nTriggered by: ${actor}.\nWorkflow: <${workflowURL}|${workflow}>`,
+        text: `${description ? `Description: ${description}\n` : ''}Repository: <${repoURL}|${owner}/${repo}>.\nRef: ${ref}.\n${eventFieldTitle}: ${eventDetail}.\nTriggered by: ${actor}.\nWorkflow: <${workflowURL}|${workflow}>`,
       },
     }
   ]
@@ -196,6 +195,7 @@ export function getPayloadSlack(inputs: Readonly<TInputs>): Object {
     username: title,
     blocks,
   };
+console.log(slack_payload);
 
   return slack_payload;
 }
