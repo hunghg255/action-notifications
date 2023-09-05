@@ -11,9 +11,6 @@ export class Notification {
   }
 
   sendDiscordNotification() {
-    console.log('Sending Discord notification');
-    console.log(this.inputs);
-
     try {
       const payload = getPayloadDiscord(this.inputs);
       return axios.post(this.inputs.discord_webhook as string, payload);
@@ -32,6 +29,6 @@ export class Notification {
 
   sendSlackNotification() {
     console.log('Sending Slack notification');
-    console.log(this.inputs);
+    // console.log(this.inputs);
   }
 }

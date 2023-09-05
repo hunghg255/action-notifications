@@ -27,7 +27,7 @@ export const getInputs = (): TInputs => {
   const title = getInput('title').trim() || '';
   const description = getInput('description').trim() || '';
 
-  return { discord_webhook, slack_webhook, title, description };
+  return { discord_webhook, slack_webhook, title, description, status };
 };
 
 export function getPayloadDiscord(inputs: Readonly<TInputs>): Object {
