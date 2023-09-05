@@ -1,0 +1,19 @@
+name: 'Generate Changelog action'
+description: 'Generate Changelog action'
+author: 'hunghg255'
+branding:
+  icon: "package"
+  color: "gray-dark"
+
+runs:
+  using: 'node16'
+  main: 'lib/index.js'
+
+inputs:
+  discord_webhook:
+    description: 'Discord webhook url.'
+    required: false
+  slack_webhook:
+    description: 'Slack webhook url.'
+    required: false
+

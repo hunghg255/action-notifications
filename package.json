@@ -1,0 +1,23 @@
+{
+  "name": "action-notifications",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "ncc build ./src/index.ts -o lib --minify"
+  },
+  "keywords": [],
+  "author": "hunghg255",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.5.9",
+    "@vercel/ncc": "^0.36.1",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@actions/core": "^1.10.0",
+    "@actions/exec": "^1.1.1",
+    "@actions/github": "^5.1.1",
+    "@actions/io": "^1.1.3"
+  }
+}
