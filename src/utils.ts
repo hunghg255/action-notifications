@@ -46,15 +46,11 @@ export function getPayloadDiscord(inputs: Readonly<TInputs>): Object {
     color: statusOpts[inputs.status as any].color,
   };
 
-  // if (!inputs.notimestamp) {
   embed.timestamp = new Date().toISOString();
-  // }
-
-  // title
   embed.title = inputs.title;
 
   // if (inputs.url) {
-  //     embed.url = inputs.url
+    // embed.url = 'URL'
   // }
 
   // if (inputs.image) {
@@ -63,15 +59,12 @@ export function getPayloadDiscord(inputs: Readonly<TInputs>): Object {
   //     }
   // }
 
-  // if (!inputs.noprefix) {
   embed.title =
     statusOpts[inputs.status as any].status +
     (embed.title ? `: ${embed.title}` : '');
-  // }
 
-  embed.description = inputs.description;
+  if (inputs.description) embed.description = inputs.description;
 
-  // if (!inputs.nocontext) {
   embed.fields = [
     {
       name: 'Repository',
@@ -99,7 +92,6 @@ export function getPayloadDiscord(inputs: Readonly<TInputs>): Object {
       inline: true,
     },
   ];
-  // }
 
   let discord_payload: any = {
     embeds: [fitEmbed(embed)],
@@ -117,4 +109,92 @@ export function getPayloadDiscord(inputs: Readonly<TInputs>): Object {
   // }
 
   return discord_payload;
+}
+
+export function getPayloadSlack(inputs: Readonly<TInputs>): Object {
+  const ctx = github.context;
+  const { owner, repo } = ctx.repo;
+  const { eventName, ref, workflow, actor, payload, serverUrl, runId } = ctx;
+  const repoURL = `${serverUrl}/${owner}/${repo}`;
+  const workflowURL = `${repoURL}/actions/runs/${runId}`;
+
+  logDebug(JSON.stringify(payload));
+
+  const eventFieldTitle = `Event - ${eventName}`;
+  const eventDetail = formatEvent(eventName, payload);
+
+  let embed: { [key: string]: any } = {
+    color: statusOpts[inputs.status as any].color,
+  };
+
+  // embed.timestamp = new Date().toISOString();
+  // embed.title = inputs.title;
+
+  // if (inputs.url) {
+    // embed.url = 'URL'
+  // }
+
+  // if (inputs.image) {
+  //     embed.image = {
+  //         url: inputs.image
+  //     }
+  // }
+
+  const title =
+    statusOpts[inputs.status as any].status +
+    (embed.title ? `: ${embed.title}` : '');
+
+    let description = '';
+
+  if (inputs.description) description = inputs.description;
+
+  // embed.fields = [
+  //   {
+  //     name: 'Repository',
+  //     value: `[${owner}/${repo}](${repoURL})`,
+  //     inline: true,
+  //   },
+  //   {
+  //     name: 'Ref',
+  //     value: ref,
+  //     inline: true,
+  //   },
+  //   {
+  //     name: eventFieldTitle,
+  //     value: eventDetail,
+  //     inline: false,
+  //   },
+  //   {
+  //     name: 'Triggered by',
+  //     value: actor,
+  //     inline: true,
+  //   },
+  //   {
+  //     name: 'Workflow',
+  //     value: `[${workflow}](${workflowURL})`,
+  //     inline: true,
+  //   },
+  // ];
+
+  // let slack_payload: any = {
+  //   embeds: [fitEmbed(embed)],
+  // };
+  logDebug(`embed: ${JSON.stringify(embed)}`);
+
+  const blocks = [
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: `${description ? `Description: ${description}\n` : ''}Repository: [${owner}/${repo}](${repoURL}).\Ref: ${ref}.\n${eventFieldTitle}: ${eventDetail}.\nTriggered by: ${actor}.\nWorkflow: [${workflow}](${workflowURL})`,
+      },
+    }
+  ]
+
+  const slack_payload = {
+    username: title,
+    blocks,
+  };
+
+  return slack_payload;
 }
