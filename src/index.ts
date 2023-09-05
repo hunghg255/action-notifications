@@ -12,9 +12,9 @@ function main() {
       setFailed('You must provide at least one webhook.')
     }
 
-    if (inputs.discord_webhook) {
-      notification.sendDiscordNotification();
-    }
+    // if (inputs.discord_webhook) {
+    //   notification.sendDiscordNotification();
+    // }
 
     if (inputs.slack_webhook) {
       notification.sendSlackNotification();

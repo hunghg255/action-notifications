@@ -2,6 +2,7 @@ import { logError } from './logs';
 import { TInputs } from './types';
 import axios from 'axios';
 import { getPayloadDiscord, getPayloadSlack } from './utils';
+import { setFailed } from '@actions/core';
 
 export class Notification {
   private inputs: TInputs;
@@ -49,15 +50,17 @@ export class Notification {
         },
       });
     } catch (e: any) {
-      if (e.response) {
-        logError(
-          `Webhook response: ${e.response.status}: ${JSON.stringify(
-            e.response.data
-          )}`
-        );
-      } else {
-        logError(e);
-      }
+      setFailed('ERROR')
+
+      // if (e.response) {
+      //   logError(
+      //     `Webhook response: ${e.response.status}: ${JSON.stringify(
+      //       e.response.data
+      //     )}`
+      //   );
+      // } else {
+      //   logError(e);
+      // }
     }
   }
 }
