@@ -118,14 +118,14 @@ export function getPayloadSlack(inputs: Readonly<TInputs>): Object {
   const repoURL = `${serverUrl}/${owner}/${repo}`;
   const workflowURL = `${repoURL}/actions/runs/${runId}`;
 
-  logDebug(JSON.stringify(payload));
+  // logDebug(JSON.stringify(payload));
 
   const eventFieldTitle = `Event - ${eventName}`;
   const eventDetail = formatEvent(eventName, payload);
 
-  let embed: { [key: string]: any } = {
-    color: statusOpts[inputs.status as any].color,
-  };
+  // let embed: { [key: string]: any } = {
+  //   color: statusOpts[inputs.status as any].color,
+  // };
 
   // embed.timestamp = new Date().toISOString();
   // embed.title = inputs.title;
@@ -142,7 +142,7 @@ export function getPayloadSlack(inputs: Readonly<TInputs>): Object {
 
   const title =
     statusOpts[inputs.status as any].status +
-    (embed.title ? `: ${embed.title}` : '');
+    (inputs.title ? `: ${inputs.title}` : '');
 
     let description = '';
 
@@ -179,7 +179,7 @@ export function getPayloadSlack(inputs: Readonly<TInputs>): Object {
   // let slack_payload: any = {
   //   embeds: [fitEmbed(embed)],
   // };
-  logDebug(`embed: ${JSON.stringify(embed)}`);
+  // logDebug(`embed: ${JSON.stringify(embed)}`);
 
   const blocks = [
     {
