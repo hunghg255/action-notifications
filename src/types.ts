@@ -3,4 +3,5 @@ export type TInputs = {
   slack_webhook?: string;
   title?: string;
   description?: string;
+  status?: string;
 }

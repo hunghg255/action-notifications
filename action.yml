@@ -19,7 +19,12 @@ inputs:
   title:
     description: 'Title of notification.'
     required: false
+    default: ${{ github.workflow }}
   description:
     description: 'Description of notification.'
     required: false
+  status:
+    description: "Job status. Should be bound to job.status. Default to success."
+    required: false
+    default: ${{ job.status }}
 
