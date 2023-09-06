@@ -5,6 +5,7 @@ import { logDebug } from './logs';
 import { formatEvent } from './discord/format';
 import { fitEmbed } from './validate';
 import { formatEventSlack } from './slack/format';
+import { formatEventTelegram } from './telegram/format';
 
 export const statusOpts: Record<string, any> = {
   success: {
@@ -33,6 +34,10 @@ export const getInputs = (): TInputs => {
 
   return { discord_webhook, slack_webhook, telegram_bot_token, telegram_chat_id, title, description, status };
 };
+
+function escapeMarkdown(text: string) {
+  return text.replace(/[_*[\]()~`>#\+\-=|{}.!]/g, '\\$&');
+}
 
 export function getPayloadDiscord(inputs: Readonly<TInputs>): Object {
   const ctx = github.context;
@@ -161,52 +166,19 @@ export function getPayloadTelegram(inputs: Readonly<TInputs>): Object {
   logDebug(JSON.stringify(payload));
 
   const eventFieldTitle = `Event - ${eventName}`;
-  const eventDetail = formatEvent(eventName, payload);
+  const eventDetail = formatEventTelegram(eventName, payload);
 
-  let embed: { [key: string]: any } = {
-    color: statusOpts[inputs.status as any].color,
-  };
-
-  embed.timestamp = new Date().toISOString();
-  embed.title = inputs.title;
-
-  embed.title =
+  const title =
     statusOpts[inputs.status as any].status +
-    (embed.title ? `: ${embed.title}` : '');
+    (inputs.title ? `: ${inputs.title}` : '');
 
-  if (inputs.description) embed.description = inputs.description;
+    let description = '';
 
-  embed.fields = [
-    {
-      name: 'Repository',
-      value: `[${owner}/${repo}](${repoURL})`,
-      inline: true,
-    },
-    {
-      name: 'Ref',
-      value: ref,
-      inline: true,
-    },
-    {
-      name: eventFieldTitle,
-      value: eventDetail,
-      inline: false,
-    },
-    {
-      name: 'Triggered by',
-      value: actor,
-      inline: true,
-    },
-    {
-      name: 'Workflow',
-      value: `[${workflow}](${workflowURL})`,
-      inline: true,
-    },
-  ];
+  if (inputs.description) description = inputs.description;
 
   let telegram_payload: any = {
     chat_id: inputs.telegram_chat_id,
-    text: `*${embed.title}*\n${embed.description}\n\n${embed.fields.map((field: any) => `${field.name}: ${field.value}`).join('\n')}`,
+    text: `${escapeMarkdown(`${title}\n${description}\nRepository: ${repoURL}\nRef: ${ref}\n${eventFieldTitle}: ${eventDetail}\nTriggered by: ${actor}\nWorkflow: ${workflowURL}`)}`,
     parse_mode: 'MarkdownV2',
   };
 
