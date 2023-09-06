@@ -2,8 +2,9 @@ import { getInput } from '@actions/core';
 import { TInputs } from './types';
 import * as github from '@actions/github';
 import { logDebug } from './logs';
-import { formatEvent } from './format';
+import { formatEvent } from './discord/format';
 import { fitEmbed } from './validate';
+import { formatEventSlack } from './slack/format';
 
 export const statusOpts: Record<string, any> = {
   success: {
@@ -121,7 +122,7 @@ export function getPayloadSlack(inputs: Readonly<TInputs>): Object {
   // logDebug(JSON.stringify(payload));
 
   const eventFieldTitle = `Event - ${eventName}`;
-  const eventDetail = formatEvent(eventName, payload);
+  const eventDetail = formatEventSlack(eventName, payload);
 
   // let embed: { [key: string]: any } = {
   //   color: statusOpts[inputs.status as any].color,

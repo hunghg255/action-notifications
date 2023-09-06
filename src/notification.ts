@@ -1,4 +1,4 @@
-import { logError } from './logs';
+import { logError, logInfo } from './logs';
 import { TInputs } from './types';
 import axios from 'axios';
 import { getPayloadDiscord, getPayloadSlack } from './utils';
@@ -31,10 +31,8 @@ export class Notification {
   sendSlackNotification() {
     try {
       const payload = getPayloadSlack(this.inputs);
-
-      return axios.post(this.inputs.slack_webhook as string,  {
-        text: 'Hello World 1111!'
-      }, {
+logInfo(JSON.stringify(payload, null, 2));
+      return axios.post(this.inputs.slack_webhook as string,  payload, {
         headers: {
           'Content-Type': 'application/json'
         },
