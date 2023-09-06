@@ -2,7 +2,6 @@ import { logError, logInfo } from './logs';
 import { TInputs } from './types';
 import axios from 'axios';
 import { getPayloadDiscord, getPayloadSlack } from './utils';
-import { setFailed } from '@actions/core';
 
 export class Notification {
   private inputs: TInputs;
@@ -18,7 +17,7 @@ export class Notification {
     } catch (e: any) {
       if (e.response) {
         logError(
-          `Webhook response: ${e.response.status}: ${JSON.stringify(
+          `Webhook Discord response: ${e.response.status}: ${JSON.stringify(
             e.response.data
           )}`
         );
@@ -38,17 +37,15 @@ logInfo(JSON.stringify(payload, null, 2));
         },
       });
     } catch (e: any) {
-      setFailed('ERROR');
-
-      // if (e.response) {
-      //   logError(
-      //     `Webhook response: ${e.response.status}: ${JSON.stringify(
-      //       e.response.data
-      //     )}`
-      //   );
-      // } else {
-      //   logError(e);
-      // }
+      if (e.response) {
+        logError(
+          `Webhook Slack response: ${e.response.status}: ${JSON.stringify(
+            e.response.data
+          )}`
+        );
+      } else {
+        logError(e);
+      }
     }
   }
 }
