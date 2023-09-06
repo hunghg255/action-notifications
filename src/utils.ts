@@ -5,7 +5,7 @@ import { logDebug } from './logs';
 import { formatEvent } from './discord/format';
 import { fitEmbed } from './validate';
 import { formatEventSlack } from './slack/format';
-import { formatEventTelegram } from './telegram/format';
+import { formatEventTelegram, escapeMarkdownUrl } from './telegram/format';
 
 export const statusOpts: Record<string, any> = {
   success: {
@@ -35,9 +35,6 @@ export const getInputs = (): TInputs => {
   return { discord_webhook, slack_webhook, telegram_bot_token, telegram_chat_id, title, description, status };
 };
 
-function escapeMarkdown(text: string) {
-  return text.replace(/[_*[\]()~`>#\+\-=|{}.!]/g, '\\$&');
-}
 
 export function getPayloadDiscord(inputs: Readonly<TInputs>): Object {
   const ctx = github.context;
@@ -178,7 +175,7 @@ export function getPayloadTelegram(inputs: Readonly<TInputs>): Object {
 
   let telegram_payload: any = {
     chat_id: inputs.telegram_chat_id,
-    text: `${escapeMarkdown(`${title}\n${description}\nRepository: ${repoURL}\nRef: ${ref}\n${eventFieldTitle}: ${eventDetail}\nTriggered by: ${actor}\nWorkflow: ${workflowURL}`)}`,
+    text: `${`*${title}*\n${description}\n*Repository:* [${owner}/${repo}](${escapeMarkdownUrl(repoURL)})\nRef: ${ref}\n*${eventFieldTitle}:* ${eventDetail}\n*Triggered by:* ${actor}\n*Workflow:* [${workflow}](${escapeMarkdownUrl(workflowURL)})`}`,
     parse_mode: 'MarkdownV2',
   };
 
