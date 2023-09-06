@@ -175,7 +175,7 @@ export function getPayloadTelegram(inputs: Readonly<TInputs>): Object {
 
   let telegram_payload: any = {
     chat_id: inputs.telegram_chat_id,
-    text: `${`*${escapeMarkdownUrl(title)}*\n${escapeMarkdownUrl(description)}\n*Repository:* [${owner}/${escapeMarkdownUrl(repo)}](${escapeMarkdownUrl(repoURL)})\nRef: ${ref}\n*${eventFieldTitle}:* ${eventDetail}\n*Triggered by:* ${actor}\n*Workflow:* [${escapeMarkdownUrl(workflow)}](${escapeMarkdownUrl(workflowURL)})`}`,
+    text: `${`*${escapeMarkdownUrl(title)}*\n${escapeMarkdownUrl(description)}\n*Repository:* [${owner}/${escapeMarkdownUrl(repo)}](${escapeMarkdownUrl(repoURL)})\n*Ref:* ${ref}\n*${eventFieldTitle}:* ${eventDetail}\n*Triggered by:* ${actor}\n*Workflow:* [${escapeMarkdownUrl(workflow)}](${escapeMarkdownUrl(workflowURL)})`}`,
     parse_mode: 'MarkdownV2',
   };
 
