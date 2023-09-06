@@ -28,6 +28,7 @@ with:
 | title                | Title              |                            |
 | description          | Description        |                            |
 
+- Config telegram bot, get chat id: [CONFIG_TELEGRAM_BOT](https://github.com/hunghg255/action-notifications/blob/master/CONFIG_TELEGRAM_BOT.md)
 
 ## Example
 ```yaml
