@@ -1,6 +1,8 @@
-# Github actions notification for Discord and Slack
+# Github actions notification to Discord, Slack, Telegram
 
 ---
+
+Fork from [actions-status-discord](https://github.com/sarisia/actions-status-discord)
 
 ## Usage
 
@@ -21,11 +23,12 @@ with:
 | -------------------- | ------------------ | :------------------------- |
 | discord\_webhook     | Discord Webhook    |                            |
 | slack\_webhook       | Slack Webhook      |                            |
-| telegram\_bot\_token | Telegram Bot Token | Require telegram\_chat\_id |
-| telegram\_chat\_id   | Telegram Chat ID   | Require telegram\_chat\_id |
+| telegram\_bot\_token | Telegram Bot Token | Require `telegram_chat_id` |
+| telegram\_chat\_id   | Telegram Chat ID   | Require `telegram_bot_token` |
 | title                | Title              |                            |
 | description          | Description        |                            |
 
+- Config telegram bot, get chat id: [CONFIG_TELEGRAM_BOT](https://github.com/hunghg255/action-notifications/blob/master/CONFIG_TELEGRAM_BOT.md)
 
 ## Example
 ```yaml
