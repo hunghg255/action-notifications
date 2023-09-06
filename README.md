@@ -2,6 +2,8 @@
 
 ---
 
+Fork from [actions-status-discord](https://github.com/sarisia/actions-status-discord)
+
 ## Usage
 
 ```yaml
