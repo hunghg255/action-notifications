@@ -4,7 +4,8 @@
   "description": "",
   "main": "lib/index.js",
   "scripts": {
-    "build": "ncc build ./src/index.ts -o lib --minify"
+    "build": "ncc build ./src/index.ts -o lib --minify",
+    "release": "bumpp -r"
   },
   "keywords": [],
   "author": "hunghg255",
@@ -12,6 +13,7 @@
   "devDependencies": {
     "@types/node": "^20.5.9",
     "@vercel/ncc": "^0.36.1",
+    "bumpp": "^9.2.0",
     "typescript": "^5.2.2"
   },
   "dependencies": {
