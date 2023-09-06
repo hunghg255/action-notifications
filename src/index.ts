@@ -20,6 +20,10 @@ function main() {
       notification.sendSlackNotification();
     }
 
+    if (inputs.telegram_bot_token && inputs.telegram_chat_id) {
+      notification.sendTelegramNotification();
+    }
+
   } catch (error: any) {
     setFailed(error.message)
   }

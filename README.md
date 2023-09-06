@@ -1,5 +1,32 @@
 # Github actions notification for Discord and Slack
 
+
+## Usage
+
+```yaml
+uses: hunghg255/action-notifications@master
+with:
+  discord_webhook: ${{ secrets.DISCORD_WEBHOOK }}
+  slack_webhook: ${{ secrets.SLACK_WEBHOOK }}
+  telegram_bot_token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+  telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
+  title: "Deploy to Dev"
+  description: "Test here: https://hung.thedev.id"
+```
+
+
+## Inputs
+| Properties           | Description        |                            |
+| -------------------- | ------------------ | :------------------------- |
+| discord\_webhook     | Discord Webhook    |                            |
+| slack\_webhook       | Slack Webhook      |                            |
+| telegram\_bot\_token | Telegram Bot Token | Require telegram\_chat\_id |
+| telegram\_chat\_id   | Telegram Chat ID   | Require telegram\_chat\_id |
+| title                | Title              |                            |
+| description          | Description        |                            |
+
+
+## Example
 ```yaml
 name: Notification
 
@@ -25,6 +52,8 @@ jobs:
         with:
           discord_webhook: ${{ secrets.DISCORD_WEBHOOK }}
           slack_webhook: ${{ secrets.SLACK_WEBHOOK }}
+          telegram_bot_token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
           title: "Deploy to Dev"
           description: "Test here: https://hung.thedev.id"
 
@@ -39,9 +68,12 @@ jobs:
         with:
           discord_webhook: ${{ secrets.DISCORD_WEBHOOK }}
           slack_webhook: ${{ secrets.SLACK_WEBHOOK }}
+          telegram_bot_token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
           title: "Deploy to Dev"
           description: "Test here: https://hung.thedev.id"
 ```
+
 
 ## Results
 

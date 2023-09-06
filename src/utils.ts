@@ -24,11 +24,14 @@ export const statusOpts: Record<string, any> = {
 export const getInputs = (): TInputs => {
   const discord_webhook = getInput('discord_webhook').trim() || '';
   const slack_webhook = getInput('slack_webhook').trim() || '';
+  const telegram_bot_token = getInput('telegram_bot_token').trim() || '';
+  const telegram_chat_id = getInput('telegram_chat_id').trim() || '';
   const status = getInput('status').trim() || '';
   const title = getInput('title').trim() || '';
   const description = getInput('description').trim() || '';
+  telegram_bot_token
 
-  return { discord_webhook, slack_webhook, title, description, status };
+  return { discord_webhook, slack_webhook, telegram_bot_token, telegram_chat_id, title, description, status };
 };
 
 export function getPayloadDiscord(inputs: Readonly<TInputs>): Object {
@@ -146,4 +149,66 @@ export function getPayloadSlack(inputs: Readonly<TInputs>): Object {
   };
 
   return slack_payload;
+}
+
+export function getPayloadTelegram(inputs: Readonly<TInputs>): Object {
+  const ctx = github.context;
+  const { owner, repo } = ctx.repo;
+  const { eventName, ref, workflow, actor, payload, serverUrl, runId } = ctx;
+  const repoURL = `${serverUrl}/${owner}/${repo}`;
+  const workflowURL = `${repoURL}/actions/runs/${runId}`;
+
+  logDebug(JSON.stringify(payload));
+
+  const eventFieldTitle = `Event - ${eventName}`;
+  const eventDetail = formatEvent(eventName, payload);
+
+  let embed: { [key: string]: any } = {
+    color: statusOpts[inputs.status as any].color,
+  };
+
+  embed.timestamp = new Date().toISOString();
+  embed.title = inputs.title;
+
+  embed.title =
+    statusOpts[inputs.status as any].status +
+    (embed.title ? `: ${embed.title}` : '');
+
+  if (inputs.description) embed.description = inputs.description;
+
+  embed.fields = [
+    {
+      name: 'Repository',
+      value: `[${owner}/${repo}](${repoURL})`,
+      inline: true,
+    },
+    {
+      name: 'Ref',
+      value: ref,
+      inline: true,
+    },
+    {
+      name: eventFieldTitle,
+      value: eventDetail,
+      inline: false,
+    },
+    {
+      name: 'Triggered by',
+      value: actor,
+      inline: true,
+    },
+    {
+      name: 'Workflow',
+      value: `[${workflow}](${workflowURL})`,
+      inline: true,
+    },
+  ];
+
+  let telegram_payload: any = {
+    chat_id: inputs.telegram_chat_id,
+    text: `*${embed.title}*\n${embed.description}\n\n${embed.fields.map((field: any) => `${field.name}: ${field.value}`).join('\n')}`,
+    parse_mode: 'MarkdownV2',
+  };
+
+  return telegram_payload;
 }

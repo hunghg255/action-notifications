@@ -8,3 +8,5 @@ export const MAX_EMBED_FIELD_VALUE_LENGTH = 1024
 // Discord Webhook limits
 // https://discord.com/developers/docs/resources/webhook#execute-webhook
 export const MAX_WEBHOOK_CONTENT_LENGTH = 2000
+
+export const TELEGRAM_SEND_MSG_URL = (botToken: string) => `https://api.telegram.org/bot${botToken}/sendMessage`;
