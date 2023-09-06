@@ -77,6 +77,11 @@ jobs:
 
 ## Results
 
+- Discord
 ![Discord](./assets/discord.png)
 
+- Slack
 ![Slack](./assets/slack.png)
+
+- Telegram
+![Telegram](./assets/telegram.png)
