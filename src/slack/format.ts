@@ -23,14 +23,14 @@ export function formatEventSlack(event: string, payload: Object): string {
 }
 
 function pushFormatter(payload: any): string {
-  return `<${payload.head_commit.ur}|\`${payload.head_commit.id.substring(
+  return `<${payload.head_commit.url}|${payload.head_commit.id.substring(
     0,
     7
-  )}\`> ${payload.head_commit.message}`;
+  )}> ${payload.head_commit.message}`;
 }
 
 function pullRequestFormatter(payload: any): string {
-  return `<${payload.pull_request.html_url}|\`#${payload.pull_request.number}\`> ${payload.pull_request.title}`;
+  return `<${payload.pull_request.html_url}|${payload.pull_request.number}> ${payload.pull_request.title}`;
 }
 
 function releaseFormatter(payload: any): string {
