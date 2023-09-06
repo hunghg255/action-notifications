@@ -1,4 +1,4 @@
-# Github actions notification for Discord, Slack, Telegram
+# Github actions notification to Discord, Slack, Telegram
 
 ---
 
