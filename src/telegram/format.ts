@@ -9,7 +9,7 @@ const formatters: Record<string, Formatter> = {
 };
 
 export function escapeMarkdownUrl(url: string) {
-  return url.replace(/\./g, '\\\\\.');
+  return url.replace(/\./g, '\\.');
 }
 
 export function formatEventTelegram(event: string, payload: Object): string {
