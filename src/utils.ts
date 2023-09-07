@@ -156,21 +156,21 @@ export function getPayloadSlack(inputs: Readonly<TInputs>): Object {
   // ];
 
   const slack_payload = {
-    username: title,
     // blocks,
     attachments: [
       {
         mrkdwn_in: ['text'],
         color: statusOpts[inputs.status as any].color,
-        pretext: description,
+        title: title,
+        text: description,
         fields: [
           {
-            title: "Repository",
+            title: 'Repository',
             value: `<${repoURL}|${owner}/${repo}>`,
             short: true,
           },
           {
-            title: "Ref",
+            title: 'Ref',
             value: ref,
             short: true,
           },
