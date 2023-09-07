@@ -137,22 +137,23 @@ export function getPayloadSlack(inputs: Readonly<TInputs>): Object {
   const title =
     statusOpts[inputs.status as any].status +
     (inputs.title ? `: ${inputs.title}` : '');
+  const timestamp = new Date().getTime();
 
   let description = '';
 
   if (inputs.description) description = inputs.description;
 
-  const blocks = [
-    {
-      type: 'section',
-      text: {
-        type: 'mrkdwn',
-        text: `${
-          description ? `${description}\n` : ''
-        }*Repository:* <${repoURL}|${owner}/${repo}>.\n*Ref:* ${ref}.\n*${eventFieldTitle}:* ${eventDetail}.\n*Triggered by:* ${actor}.\n*Workflow:* <${workflowURL}|${workflow}>`,
-      },
-    },
-  ];
+  // const blocks = [
+  //   {
+  //     type: 'section',
+  //     text: {
+  //       type: 'mrkdwn',
+  //       text: `${
+  //         description ? `${description}\n` : ''
+  //       }*Repository:* <${repoURL}|${owner}/${repo}>.\n*Ref:* ${ref}.\n*${eventFieldTitle}:* ${eventDetail}.\n*Triggered by:* ${actor}.\n*Workflow:* <${workflowURL}|${workflow}>`,
+  //     },
+  //   },
+  // ];
 
   const slack_payload = {
     username: title,
@@ -160,36 +161,36 @@ export function getPayloadSlack(inputs: Readonly<TInputs>): Object {
     attachments: [
       {
         mrkdwn_in: ['text'],
-        color: '#36a64f',
-        pretext: 'Optional pre-text that appears above the attachment block',
-        author_name: 'author_name',
-        author_link: 'http://flickr.com/bobby/',
-        author_icon: 'https://placeimg.com/16/16/people',
-        title: 'title',
-        title_link: 'https://api.slack.com/',
-        text: 'Optional `text` that appears within the attachment',
+        color: statusOpts[inputs.status as any].color,
+        pretext: description,
         fields: [
           {
-            title: "A field's title",
-            value: "This field's value",
-            short: false,
-          },
-          {
-            title: "A short field's title",
-            value: "A short field's value",
+            title: "Repository",
+            value: `<${repoURL}|${owner}/${repo}>`,
             short: true,
           },
           {
-            title: "A second short field's title",
-            value: "A second short field's value",
+            title: "Ref",
+            value: ref,
+            short: true,
+          },
+          {
+            title: eventFieldTitle,
+            value: eventDetail,
+            short: true,
+          },
+          {
+            title: 'Triggered by',
+            value: actor,
+            short: true,
+          },
+          {
+            title: 'Workflow',
+            value: `<${workflowURL}|${workflow}>`,
             short: true,
           },
         ],
-        thumb_url: 'http://placekitten.com/g/200/200',
-        footer: 'footer',
-        footer_icon:
-          'https://platform.slack-edge.com/img/default_application_icon.png',
-        ts: 123456789,
+        ts: timestamp,
       },
     ],
   };
