@@ -16,6 +16,9 @@ inputs:
   slack_webhook:
     description: 'Slack webhook url.'
     required: false
+  slack_username:
+    description: 'Slack username.'
+    required: false
   telegram_bot_token:
     description: 'Telegram bot token.'
     required: false

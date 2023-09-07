@@ -23,6 +23,7 @@ with:
 | -------------------- | ------------------ | :------------------------- |
 | discord\_webhook     | Discord Webhook    |                            |
 | slack\_webhook       | Slack Webhook      |                            |
+| slack\_username       | Slack Username      |                            |
 | telegram\_bot\_token | Telegram Bot Token | Require `telegram_chat_id` |
 | telegram\_chat\_id   | Telegram Chat ID   | Require `telegram_bot_token` |
 | title                | Title              |                            |

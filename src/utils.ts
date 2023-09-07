@@ -25,6 +25,7 @@ export const statusOpts: Record<string, any> = {
 export const getInputs = (): TInputs => {
   const discord_webhook = getInput('discord_webhook').trim() || '';
   const slack_webhook = getInput('slack_webhook').trim() || '';
+  const slack_username = getInput('slack_username').trim() || '';
   const telegram_bot_token = getInput('telegram_bot_token').trim() || '';
   const telegram_chat_id = getInput('telegram_chat_id').trim() || '';
   const status = getInput('status').trim() || '';
@@ -35,6 +36,7 @@ export const getInputs = (): TInputs => {
   return {
     discord_webhook,
     slack_webhook,
+    slack_username,
     telegram_bot_token,
     telegram_chat_id,
     title,
@@ -156,6 +158,7 @@ export function getPayloadSlack(inputs: Readonly<TInputs>): Object {
   // ];
 
   const slack_payload = {
+    username: inputs.slack_username || 'Notifications',
     // blocks,
     attachments: [
       {
