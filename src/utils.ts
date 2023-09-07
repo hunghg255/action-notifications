@@ -11,14 +11,17 @@ export const statusOpts: Record<string, any> = {
   success: {
     status: 'Success',
     color: 0x28a745,
+    color_slack: '#28a745',
   },
   failure: {
     status: 'Failure',
     color: 0xcb2431,
+    color_slack: '#cb2431',
   },
   cancelled: {
     status: 'Cancelled',
     color: 0xdbab09,
+    color_slack: '#dbab09',
   },
 };
 
@@ -145,25 +148,12 @@ export function getPayloadSlack(inputs: Readonly<TInputs>): Object {
 
   if (inputs.description) description = inputs.description;
 
-  // const blocks = [
-  //   {
-  //     type: 'section',
-  //     text: {
-  //       type: 'mrkdwn',
-  //       text: `${
-  //         description ? `${description}\n` : ''
-  //       }*Repository:* <${repoURL}|${owner}/${repo}>.\n*Ref:* ${ref}.\n*${eventFieldTitle}:* ${eventDetail}.\n*Triggered by:* ${actor}.\n*Workflow:* <${workflowURL}|${workflow}>`,
-  //     },
-  //   },
-  // ];
-
   const slack_payload = {
     username: inputs.slack_username || 'Notifications',
-    // blocks,
     attachments: [
       {
         mrkdwn_in: ['text'],
-        color: statusOpts[inputs.status as any].color,
+        color: statusOpts[inputs.status as any].color_slack,
         title: title,
         text: description,
         fields: [
