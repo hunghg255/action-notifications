@@ -170,7 +170,7 @@ export function getPayloadSlack(inputs: Readonly<TInputs>): Object {
           {
             title: eventFieldTitle,
             value: eventDetail,
-            short: true,
+            short: false,
           },
           {
             title: 'Triggered by',
