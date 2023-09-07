@@ -83,10 +83,12 @@ jobs:
 ## Results
 
 - Discord
+
 ![Discord](./assets/discord.png)
 
 
 - Slack
+
 ![Slack](./assets/slack.png)
 
 
