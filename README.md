@@ -1,4 +1,4 @@
-# Github actions notification to Discord, Slack, Telegram
+# Github actions notification to Discord, Slack, Telegram, Google chat, Microsoft Teams
 
 ---
 
@@ -13,10 +13,11 @@ with:
   slack_webhook: ${{ secrets.SLACK_WEBHOOK }}
   telegram_bot_token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
   telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
+  google_chat_webhook: ${{ secrets.GOOGLE_CHAT_WEBHOOK }}
+  ms_teams_webhook: ${{ secrets.MS_TEAMS_WEBHOOK }}
   title: "Deploy to Dev"
   description: "Test here: https://hung.thedev.id"
 ```
-
 
 ## Inputs
 | Properties           | Description        |                            |
@@ -26,6 +27,8 @@ with:
 | slack\_username       | Slack Username      |                            |
 | telegram\_bot\_token | Telegram Bot Token | Require `telegram_chat_id` |
 | telegram\_chat\_id   | Telegram Chat ID   | Require `telegram_bot_token` |
+| google\_chat\_webhook   | Google Chat Webhook   |  |
+| ms\_teams\_webhook   | Microsoft Teams Webhook   | |
 | title                | Title              |                            |
 | description          | Description        |                            |
 
@@ -59,6 +62,8 @@ jobs:
           slack_webhook: ${{ secrets.SLACK_WEBHOOK }}
           telegram_bot_token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
+          google_chat_webhook: ${{ secrets.GOOGLE_CHAT_WEBHOOK }}
+          ms_teams_webhook: ${{ secrets.MS_TEAMS_WEBHOOK }}
           title: "Deploy to Dev"
           description: "Test here: https://hung.thedev.id"
 
@@ -75,6 +80,8 @@ jobs:
           slack_webhook: ${{ secrets.SLACK_WEBHOOK }}
           telegram_bot_token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
+          google_chat_webhook: ${{ secrets.GOOGLE_CHAT_WEBHOOK }}
+          ms_teams_webhook: ${{ secrets.MS_TEAMS_WEBHOOK }}
           title: "Deploy to Dev"
           description: "Test here: https://hung.thedev.id"
 ```
@@ -95,3 +102,11 @@ jobs:
 - Telegram
 
 ![Telegram](./assets/telegram.png)
+
+- Google Chat
+
+![Google Chat](./assets/google-chat.png)
+
+- Microsoft Teams
+
+![Microsoft Teams](./assets/ms-teams.png)
