@@ -20,8 +20,12 @@ function main() {
       notification.sendSlackNotification();
     }
 
-    if (inputs.telegram_bot_token && inputs.telegram_chat_id) {
-      notification.sendTelegramNotification();
+    if (inputs.google_chat_webhook) {
+      notification.sendGoogleChatNotification();
+    }
+
+    if (inputs.ms_teams_webhook) {
+      notification.sendMsTeamsNotification();
     }
 
   } catch (error: any) {

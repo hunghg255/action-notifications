@@ -25,6 +25,12 @@ inputs:
   telegram_chat_id:
     description: 'Telegram chat id.'
     required: false
+  google_chat_webhook:
+    description: 'Google chat webhook url.'
+    required: false
+  ms_teams_webhook:
+    description: 'Microsoft teams webhook url.'
+    required: false
   title:
     description: 'Title of notification.'
     required: false

@@ -1,7 +1,7 @@
 import { logError, logInfo } from './logs';
 import { TInputs } from './types';
 import axios from 'axios';
-import { getPayloadDiscord, getPayloadSlack, getPayloadTelegram } from './utils';
+import { getPayloadDiscord, getPayloadGoogleChat, getPayloadMsTeams, getPayloadSlack, getPayloadTelegram } from './utils';
 import { TELEGRAM_SEND_MSG_URL } from './constants';
 
 export class Notification {
@@ -63,7 +63,51 @@ logInfo(JSON.stringify(payload, null, 2));
     } catch (e: any) {
       if (e.response) {
         logError(
-          `Webhook Slack response: ${e.response.status}: ${JSON.stringify(
+          `Webhook Telegram response: ${e.response.status}: ${JSON.stringify(
+            e.response.data
+          )}`
+        );
+      } else {
+        logError(e);
+      }
+    }
+  }
+
+  sendGoogleChatNotification() {
+    try {
+      const payload = getPayloadGoogleChat(this.inputs);
+
+      return axios.post(this.inputs.google_chat_webhook as string,  payload, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      });
+    } catch (e: any) {
+      if (e.response) {
+        logError(
+          `Webhook Google Chat response: ${e.response.status}: ${JSON.stringify(
+            e.response.data
+          )}`
+        );
+      } else {
+        logError(e);
+      }
+    }
+  }
+
+  sendMsTeamsNotification() {
+    try {
+      const payload = getPayloadMsTeams(this.inputs);
+
+      return axios.post(this.inputs.ms_teams_webhook as string,  payload, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      });
+    } catch (e: any) {
+      if (e.response) {
+        logError(
+          `Webhook MS teams response: ${e.response.status}: ${JSON.stringify(
             e.response.data
           )}`
         );

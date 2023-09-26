@@ -6,6 +6,7 @@ import { formatEvent } from './discord/format';
 import { fitEmbed } from './validate';
 import { formatEventSlack } from './slack/format';
 import { formatEventTelegram, escapeMarkdownUrl } from './telegram/format';
+import { formatEventGoogleChat } from './google-chat/format';
 
 export const statusOpts: Record<string, any> = {
   success: {
@@ -25,12 +26,21 @@ export const statusOpts: Record<string, any> = {
   },
 };
 
+const textButton = (text: string, url: string) => ({
+  textButton: {
+    text,
+    onClick: { openLink: { url } },
+  },
+});
+
 export const getInputs = (): TInputs => {
   const discord_webhook = getInput('discord_webhook').trim() || '';
   const slack_webhook = getInput('slack_webhook').trim() || '';
   const slack_username = getInput('slack_username').trim() || '';
   const telegram_bot_token = getInput('telegram_bot_token').trim() || '';
   const telegram_chat_id = getInput('telegram_chat_id').trim() || '';
+  const google_chat_webhook = getInput('google_chat_webhook').trim() || '';
+  const ms_teams_webhook = getInput('ms_teams_webhook').trim() || '';
   const status = getInput('status').trim() || '';
   const title = getInput('title').trim() || '';
   const description = getInput('description').trim() || '';
@@ -42,6 +52,8 @@ export const getInputs = (): TInputs => {
     slack_username,
     telegram_bot_token,
     telegram_chat_id,
+    google_chat_webhook,
+    ms_teams_webhook,
     title,
     description,
     status,
@@ -224,4 +236,143 @@ export function getPayloadTelegram(inputs: Readonly<TInputs>): Object {
   };
 
   return telegram_payload;
+}
+
+export function getPayloadGoogleChat(inputs: Readonly<TInputs>): Object {
+  const ctx = github.context;
+  const { owner, repo } = ctx.repo;
+  const { eventName, ref, workflow, actor, payload, serverUrl, runId } = ctx;
+  const repoURL = `${serverUrl}/${owner}/${repo}`;
+  const workflowURL = `${repoURL}/actions/runs/${runId}`;
+
+  logDebug(JSON.stringify(payload));
+
+  const eventFieldTitle = `Event - ${eventName}`;
+  const eventDetail = formatEventGoogleChat(eventName, payload);
+
+  let embed: { [key: string]: any } = {
+    color: statusOpts[inputs.status as any].color,
+  };
+
+  embed.timestamp = new Date().toISOString();
+  embed.title = inputs.title;
+
+  embed.title =
+    statusOpts[inputs.status as any].status +
+    (embed.title ? `: ${embed.title}` : '');
+
+  if (inputs.description) embed.description = inputs.description;
+
+  const payload_gg = {
+    cards: [
+      {
+        sections: [
+          {
+            widgets: [
+              {
+                textParagraph: {
+                  text: `<b><font color="${embed.color}">${inputs.title}</font></b>`,
+                },
+              },
+              {
+                textParagraph: {
+                  text: embed.description,
+                },
+              },
+            ],
+          },
+          {
+            widgets: [
+              {
+                keyValue: {
+                  topLabel: 'Repository',
+                  content: `${owner}/${repo}`,
+                  contentMultiline: true,
+                  button: textButton('Open Repository', repoURL),
+                },
+              },
+              {
+                keyValue: { topLabel: 'ref', content: ref },
+              },
+              {
+                keyValue: {
+                  topLabel: eventFieldTitle,
+                  content: eventDetail.text,
+                  contentMultiline: true,
+                  button: textButton('Open Event', eventDetail.url || repoURL),
+                },
+              },
+              {
+                keyValue: { topLabel: 'Triggered by', content: actor },
+              },
+              {
+                keyValue: {
+                  topLabel: 'Workflow',
+                  content: workflow,
+                  contentMultiline: true,
+                  button: textButton('Open Workflow', workflowURL),
+                },
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+
+  return payload_gg;
+}
+
+export function getPayloadMsTeams(inputs: Readonly<TInputs>): Object {
+  const ctx = github.context;
+  const { owner, repo } = ctx.repo;
+  const { eventName, ref, workflow, actor, payload, serverUrl, runId } = ctx;
+  const repoURL = `${serverUrl}/${owner}/${repo}`;
+  const workflowURL = `${repoURL}/actions/runs/${runId}`;
+
+  logDebug(JSON.stringify(payload));
+
+  const eventFieldTitle = `Event - ${eventName}`;
+  const eventDetail = formatEvent(eventName, payload);
+
+  let embed: { [key: string]: any } = {
+    color: statusOpts[inputs.status as any].color,
+  };
+
+  embed.timestamp = new Date().toISOString();
+  embed.title = inputs.title;
+
+  embed.title =
+    statusOpts[inputs.status as any].status +
+    (embed.title ? `: ${embed.title}` : '');
+
+  if (inputs.description) embed.description = inputs.description;
+
+  const payload_ms_teams = {
+    type: 'message',
+    attachments: [
+      {
+        contentType: 'application/vnd.microsoft.teams.card.o365connector',
+        content: {
+          '@type': 'MessageCard',
+          '@context': 'https://schema.org/extensions',
+          summary: 'Summary',
+          themeColor: embed.color,
+          title: embed.title,
+          sections: [
+            {
+              text: embed.description,
+              wrap: true,
+            },
+            {
+              text: `<strong>Repository:</strong> [${owner}/${repo}](${repoURL})<br /><strong>Ref:</strong> ${ref}<br/><strong>${eventFieldTitle}:</strong> ${eventDetail}<br/><strong>Triggered by:</strong> ${actor}<br /><strong>Workflow:</strong> [${workflow}](${workflowURL})`,
+              wrap: true,
+            },
+          ],
+        },
+      },
+    ],
+  };
+
+  return payload_ms_teams;
 }
