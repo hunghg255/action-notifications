@@ -8,7 +8,7 @@ function main() {
 
     const notification = new Notification(inputs);
 
-    if (!inputs.discord_webhook && !inputs.slack_webhook) {
+    if (!inputs.discord_webhook && !inputs.slack_webhook && !inputs.telegram_bot_token && !inputs.google_chat_webhook && !inputs.ms_teams_webhook) {
       setFailed('You must provide at least one webhook.')
     }
 
@@ -18,6 +18,16 @@ function main() {
 
     if (inputs.slack_webhook) {
       notification.sendSlackNotification();
+    }
+
+    if (inputs.telegram_bot_token) {
+      if (!inputs.telegram_chat_id) {
+        setFailed('You must provide a telegram chat id.')
+      }
+
+      if (inputs.telegram_chat_id) {
+        notification.sendTelegramNotification();
+      }
     }
 
     if (inputs.google_chat_webhook) {

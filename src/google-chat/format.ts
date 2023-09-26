@@ -31,14 +31,14 @@ export function formatEventGoogleChat(event: string, payload: Object): any {
 
 function pushFormatter(payload: any): any {
   return {
-    text: `\`${payload.head_commit.id.substring(0, 7)}\` ${payload.head_commit.message}`,
+    text: `${payload.head_commit.id.substring(0, 7)}: ${payload.head_commit.message}`,
     url: payload.head_commit.url,
   }
 }
 
 function pullRequestFormatter(payload: any): any {
   return {
-    text: `\`#${payload.pull_request.number}\` ${payload.pull_request.title}`,
+    text: `#${payload.pull_request.number}: ${payload.pull_request.title}`,
     url: payload.pull_request.html_url,
   }
 }

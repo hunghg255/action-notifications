@@ -12,17 +12,17 @@ export const statusOpts: Record<string, any> = {
   success: {
     status: 'Success',
     color: 0x28a745,
-    color_slack: '#28a745',
+    color_hex: '#28a745',
   },
   failure: {
     status: 'Failure',
     color: 0xcb2431,
-    color_slack: '#cb2431',
+    color_hex: '#cb2431',
   },
   cancelled: {
     status: 'Cancelled',
     color: 0xdbab09,
-    color_slack: '#dbab09',
+    color_hex: '#dbab09',
   },
 };
 
@@ -165,7 +165,7 @@ export function getPayloadSlack(inputs: Readonly<TInputs>): Object {
     attachments: [
       {
         mrkdwn_in: ['text'],
-        color: statusOpts[inputs.status as any].color_slack,
+        color: statusOpts[inputs.status as any].color_hex,
         title: title,
         text: description,
         fields: [
@@ -251,7 +251,7 @@ export function getPayloadGoogleChat(inputs: Readonly<TInputs>): Object {
   const eventDetail = formatEventGoogleChat(eventName, payload);
 
   let embed: { [key: string]: any } = {
-    color: statusOpts[inputs.status as any].color,
+    color: statusOpts[inputs.status as any].color_hex,
   };
 
   embed.timestamp = new Date().toISOString();
