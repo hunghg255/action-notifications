@@ -336,7 +336,7 @@ export function getPayloadMsTeams(inputs: Readonly<TInputs>): Object {
   const eventDetail = formatEvent(eventName, payload);
 
   let embed: { [key: string]: any } = {
-    color: statusOpts[inputs.status as any].color,
+    color: statusOpts[inputs.status as any].color_hex,
   };
 
   embed.timestamp = new Date().toISOString();
