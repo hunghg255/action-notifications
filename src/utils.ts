@@ -271,7 +271,7 @@ export function getPayloadGoogleChat(inputs: Readonly<TInputs>): Object {
             widgets: [
               {
                 textParagraph: {
-                  text: `<b><font color="${embed.color}">${inputs.title}</font></b>`,
+                  text: `<b><font color="${embed.color}">${embed.title}</font></b>`,
                 },
               },
               {
