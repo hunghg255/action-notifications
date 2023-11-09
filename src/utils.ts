@@ -149,7 +149,7 @@ export function getPayloadDiscord(inputs: Readonly<TInputs>): Object {
   //     discord_payload.content = fitContent(inputs.content)
   // }
 
-  return discord_payload;
+  return JSON.stringify(discord_payload);
 }
 
 export function getPayloadSlack(inputs: Readonly<TInputs>): Object {

@@ -14,7 +14,7 @@ export class Notification {
   sendDiscordNotification() {
     try {
       const payload = getPayloadDiscord(this.inputs);
-      return axios.patch(this.inputs.discord_webhook as string, payload);
+      return axios.post(this.inputs.discord_webhook as string, payload);
     } catch (e: any) {
       if (e.response) {
         logError(
