@@ -9,4 +9,5 @@ export type TInputs = {
   title?: string;
   description?: string;
   status?: string;
+  qrcode?: string;
 }

@@ -7,6 +7,7 @@ import { fitEmbed } from './validate';
 import { formatEventSlack } from './slack/format';
 import { formatEventTelegram, escapeMarkdownUrl } from './telegram/format';
 import { formatEventGoogleChat } from './google-chat/format';
+import { renderBase64 } from 'hqr';
 
 export const statusOpts: Record<string, any> = {
   success: {
@@ -44,6 +45,7 @@ export const getInputs = (): TInputs => {
   const status = getInput('status').trim() || '';
   const title = getInput('title').trim() || '';
   const description = getInput('description').trim() || '';
+  const qrcode = getInput('qrcode').trim() || '';
   telegram_bot_token;
 
   return {
@@ -57,6 +59,7 @@ export const getInputs = (): TInputs => {
     title,
     description,
     status,
+    qrcode
   };
 };
 
@@ -93,6 +96,7 @@ export function getPayloadDiscord(inputs: Readonly<TInputs>): Object {
     statusOpts[inputs.status as any].status +
     (embed.title ? `: ${embed.title}` : '');
 
+
   if (inputs.description) embed.description = inputs.description;
 
   embed.fields = [
@@ -123,9 +127,16 @@ export function getPayloadDiscord(inputs: Readonly<TInputs>): Object {
     },
   ];
 
+  if (inputs.qrcode) {
+    embed.thumbnail = {
+      url: renderBase64(inputs.qrcode)
+    }
+  }
+
   let discord_payload: any = {
     embeds: [fitEmbed(embed)],
   };
+
   logDebug(`embed: ${JSON.stringify(embed)}`);
 
   // if (inputs.username) {

@@ -31,6 +31,7 @@ with:
 | ms\_teams\_webhook   | Microsoft Teams Webhook   | |
 | title                | Title              |                            |
 | description          | Description        |                            |
+| qrcode          | Text        |                            |
 
 - Config telegram bot, get chat id: [CONFIG_TELEGRAM_BOT](https://github.com/hunghg255/action-notifications/blob/master/CONFIG_TELEGRAM_BOT.md)
 

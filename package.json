@@ -20,7 +20,8 @@
     "@actions/exec": "^1.1.1",
     "@actions/github": "^5.1.1",
     "@actions/io": "^1.1.3",
-    "axios": "^1.5.0"
+    "axios": "^1.5.0",
+    "hqr": "^0.0.3"
   },
   "homepage": "https://github.com/hunghg255/action-notifications",
   "repository": {
