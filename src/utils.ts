@@ -129,7 +129,7 @@ export function getPayloadDiscord(inputs: Readonly<TInputs>): Object {
 
   if (inputs.qrcode) {
     embed.thumbnail = {
-      url: renderBase64(inputs.qrcode)
+      url: 'https://cdn.discordapp.com/embed/avatars/0.png'
     }
   }
 
