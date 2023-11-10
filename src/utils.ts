@@ -7,7 +7,8 @@ import { fitEmbed } from './validate';
 import { formatEventSlack } from './slack/format';
 import { formatEventTelegram, escapeMarkdownUrl } from './telegram/format';
 import { formatEventGoogleChat } from './google-chat/format';
-import { renderBase64 } from 'hqr';
+import FormData from 'form-data';
+import QRCode from 'qrcode';
 
 export const statusOpts: Record<string, any> = {
   success: {
@@ -59,11 +60,11 @@ export const getInputs = (): TInputs => {
     title,
     description,
     status,
-    qrcode
+    qrcode,
   };
 };
 
-export function getPayloadDiscord(inputs: Readonly<TInputs>): Object {
+export async function getPayloadDiscord(inputs: Readonly<TInputs>) {
   const ctx = github.context;
   const { owner, repo } = ctx.repo;
   const { eventName, ref, workflow, actor, payload, serverUrl, runId } = ctx;
@@ -127,15 +128,30 @@ export function getPayloadDiscord(inputs: Readonly<TInputs>): Object {
     },
   ];
 
-  // if (inputs.qrcode) {
-  //   embed.thumbnail = {
-  //     url: renderBase64(inputs.qrcode)
-  //   }
-  // }
+  if (inputs.qrcode) {
+    embed.thumbnail = {
+      url: 'attachment://actionqrcode.png',
+    };
+  }
 
-  let discord_payload: any = {
-    embeds: [fitEmbed(embed)],
-  };
+  const form = new FormData();
+
+  if (inputs.qrcode && typeof inputs.qrcode === 'string') {
+    const r = await QRCode.toDataURL(inputs.qrcode);
+
+    form.append(
+      'file[0]',
+      Buffer.from(r.replace('data:image/png;base64,', ''), 'base64'),
+      'actionqrcode.png'
+    );
+  }
+
+  form.append(
+    'payload_json',
+    JSON.stringify({
+      embeds: [fitEmbed(embed)],
+    })
+  );
 
   logDebug(`embed: ${JSON.stringify(embed)}`);
 
@@ -149,7 +165,7 @@ export function getPayloadDiscord(inputs: Readonly<TInputs>): Object {
   //     discord_payload.content = fitContent(inputs.content)
   // }
 
-  return discord_payload;
+  return form;
 }
 
 export function getPayloadSlack(inputs: Readonly<TInputs>): Object {
