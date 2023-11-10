@@ -8,7 +8,7 @@ import { formatEventSlack } from './slack/format';
 import { formatEventTelegram, escapeMarkdownUrl } from './telegram/format';
 import { formatEventGoogleChat } from './google-chat/format';
 import FormData from 'form-data';
-import QRCode from 'qrcode';
+import { renderBase64 } from 'hqr';
 
 export const statusOpts: Record<string, any> = {
   success: {
@@ -137,7 +137,7 @@ export async function getPayloadDiscord(inputs: Readonly<TInputs>) {
   const form = new FormData();
 
   if (inputs.qrcode && typeof inputs.qrcode === 'string') {
-    const r = await QRCode.toDataURL(inputs.qrcode);
+    const r = await renderBase64(inputs.qrcode) as string;
 
     form.append(
       'file[0]',
