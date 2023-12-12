@@ -250,6 +250,7 @@ export function getPayloadTelegram(inputs: Readonly<TInputs>): Object {
 
   if (inputs.description) description = inputs.description;
 
+
   let telegram_payload: any = {
     chat_id: inputs.telegram_chat_id,
     text: `${`*${escapeMarkdownUrl(title)}*\n${escapeMarkdownUrl(
@@ -261,6 +262,10 @@ export function getPayloadTelegram(inputs: Readonly<TInputs>): Object {
     )}](${escapeMarkdownUrl(workflowURL)})`}`,
     parse_mode: 'MarkdownV2',
   };
+
+  if (inputs.telegram_message_thread_id) {
+    telegram_payload.message_thread_id = inputs.telegram_message_thread_id;
+  }
 
   return telegram_payload;
 }
