@@ -41,6 +41,7 @@ export const getInputs = (): TInputs => {
   const slack_username = getInput('slack_username').trim() || '';
   const telegram_bot_token = getInput('telegram_bot_token').trim() || '';
   const telegram_chat_id = getInput('telegram_chat_id').trim() || '';
+  const telegram_message_thread_id = getInput('telegram_message_thread_id').trim() || '';
   const google_chat_webhook = getInput('google_chat_webhook').trim() || '';
   const ms_teams_webhook = getInput('ms_teams_webhook').trim() || '';
   const status = getInput('status').trim() || '';
@@ -55,6 +56,7 @@ export const getInputs = (): TInputs => {
     slack_username,
     telegram_bot_token,
     telegram_chat_id,
+    telegram_message_thread_id,
     google_chat_webhook,
     ms_teams_webhook,
     title,
