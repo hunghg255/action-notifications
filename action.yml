@@ -25,6 +25,9 @@ inputs:
   telegram_chat_id:
     description: 'Telegram chat id.'
     required: false
+  telegram_message_thread_id:
+    description: "Message thread id for topic"
+    required: false
   google_chat_webhook:
     description: 'Google chat webhook url.'
     required: false

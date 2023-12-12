@@ -20,18 +20,19 @@ with:
 ```
 
 ## Inputs
-| Properties           | Description        |                            |
-| -------------------- | ------------------ | :------------------------- |
-| discord\_webhook     | Discord Webhook    |                            |
-| slack\_webhook       | Slack Webhook      |                            |
-| slack\_username       | Slack Username      |                            |
-| telegram\_bot\_token | Telegram Bot Token | Require `telegram_chat_id` |
-| telegram\_chat\_id   | Telegram Chat ID   | Require `telegram_bot_token` |
-| google\_chat\_webhook   | Google Chat Webhook   |  |
-| ms\_teams\_webhook   | Microsoft Teams Webhook   | |
-| title                | Title              |                            |
-| description          | Description        |                            |
-| qrcode          | Text        |                            |
+| Properties                   | Description                       |                              |
+| ---------------------------- | --------------------------------- | :--------------------------- |
+| discord\_webhook             | Discord Webhook                   |                              |
+| slack\_webhook               | Slack Webhook                     |                              |
+| slack\_username              | Slack Username                    |                              |
+| telegram\_bot\_token         | Telegram Bot Token                | Require `telegram_chat_id`   |
+| telegram\_chat\_id           | Telegram Chat ID                  | Require `telegram_bot_token` |
+| telegram\_message\_thread_id | Telegram Thread Message For Topic |                              |
+| google\_chat\_webhook        | Google Chat Webhook               |                              |
+| ms\_teams\_webhook           | Microsoft Teams Webhook           |                              |
+| title                        | Title                             |                              |
+| description                  | Description                       |                              |
+| qrcode                       | Text                              |                              |
 
 - Config telegram bot, get chat id: [CONFIG_TELEGRAM_BOT](https://github.com/hunghg255/action-notifications/blob/master/CONFIG_TELEGRAM_BOT.md)
 
@@ -81,6 +82,7 @@ jobs:
           slack_webhook: ${{ secrets.SLACK_WEBHOOK }}
           telegram_bot_token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
+          telegra_message_thread_id: $ {{ secrets.TELEGRAM_MESSAGE_THREAD_ID }}
           google_chat_webhook: ${{ secrets.GOOGLE_CHAT_WEBHOOK }}
           ms_teams_webhook: ${{ secrets.MS_TEAMS_WEBHOOK }}
           title: "Deploy to Dev"
