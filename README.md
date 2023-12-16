@@ -13,7 +13,7 @@ with:
   slack_webhook: ${{ secrets.SLACK_WEBHOOK }}
   telegram_bot_token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
   telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
-  telegram_message_thread_id: ${{ secrets.TELEGRAM_MESSAGE_THREAD_ID }}
+  # telegram_message_thread_id: ${{ secrets.TELEGRAM_MESSAGE_THREAD_ID }}
   google_chat_webhook: ${{ secrets.GOOGLE_CHAT_WEBHOOK }}
   ms_teams_webhook: ${{ secrets.MS_TEAMS_WEBHOOK }}
   title: "Deploy to Dev"
@@ -65,7 +65,8 @@ jobs:
           slack_webhook: ${{ secrets.SLACK_WEBHOOK }}
           telegram_bot_token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
-          telegram_message_thread_id: ${{ secrets.TELEGRAM_MESSAGE_THREAD_ID }}
+          # Remove comment below for Telegram Topic Message
+          # telegram_message_thread_id: ${{ secrets.TELEGRAM_MESSAGE_THREAD_ID }}
           google_chat_webhook: ${{ secrets.GOOGLE_CHAT_WEBHOOK }}
           ms_teams_webhook: ${{ secrets.MS_TEAMS_WEBHOOK }}
           title: "Deploy to Dev"
@@ -84,7 +85,8 @@ jobs:
           slack_webhook: ${{ secrets.SLACK_WEBHOOK }}
           telegram_bot_token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
-          telegram_message_thread_id: ${{ secrets.TELEGRAM_MESSAGE_THREAD_ID }}
+          # Remove comment below for Telegram Topic Message
+          # telegram_message_thread_id: ${{ secrets.TELEGRAM_MESSAGE_THREAD_ID }}
           google_chat_webhook: ${{ secrets.GOOGLE_CHAT_WEBHOOK }}
           ms_teams_webhook: ${{ secrets.MS_TEAMS_WEBHOOK }}
           title: "Deploy to Dev"
