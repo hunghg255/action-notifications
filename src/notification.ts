@@ -21,16 +21,7 @@ export class Notification {
     try {
       const payload = await getPayloadDiscord(this.inputs);
 
-      // return axios.post(this.inputs.discord_webhook as string, payload);
-
-      return axios({
-        method: 'post',
-        url: this.inputs.discord_webhook as string,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        data: payload,
-      })
+      return axios.post(this.inputs.discord_webhook as string, payload);
     } catch (e: any) {
       if (e.response) {
         logError(
