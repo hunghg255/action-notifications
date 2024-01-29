@@ -8,7 +8,7 @@ import {
   getPayloadSlack,
   getPayloadTelegram,
 } from './utils';
-import { TELEGRAM_SEND_MSG_URL } from './constants';
+import { TELEGRAM_SEND_PHOTO_URL } from './constants';
 
 export class Notification {
   private inputs: TInputs;
@@ -62,7 +62,7 @@ export class Notification {
       const payload = getPayloadTelegram(this.inputs);
 
       return axios.post(
-        TELEGRAM_SEND_MSG_URL(this.inputs.telegram_bot_token as string),
+        TELEGRAM_SEND_PHOTO_URL(this.inputs.telegram_bot_token as string),
         payload,
         {
           headers: {

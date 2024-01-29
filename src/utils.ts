@@ -242,7 +242,7 @@ export function getPayloadTelegram(inputs: Readonly<TInputs>): Object {
 
   let telegram_payload: any = {
     chat_id: inputs.telegram_chat_id,
-    text: `${`*${escapeMarkdownUrl(title)}*\n${escapeMarkdownUrl(
+    caption: `${`*${escapeMarkdownUrl(title)}*\n${escapeMarkdownUrl(
       description
     )}\n*Repository:* [${owner}/${escapeMarkdownUrl(repo)}](${escapeMarkdownUrl(
       repoURL
