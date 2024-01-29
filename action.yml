@@ -46,5 +46,5 @@ inputs:
     required: false
     default: ${{ job.status }}
   qrcode:
-      description: "Display with qrcode"
-      required: false
+    description: "Display with qrcode"
+    required: false

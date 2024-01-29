@@ -7,8 +7,6 @@ import { fitEmbed } from './validate';
 import { formatEventSlack } from './slack/format';
 import { formatEventTelegram, escapeMarkdownUrl } from './telegram/format';
 import { formatEventGoogleChat } from './google-chat/format';
-import FormData from 'form-data';
-import { renderBase64 } from 'hqr';
 
 export const statusOpts: Record<string, any> = {
   success: {
@@ -132,28 +130,13 @@ export async function getPayloadDiscord(inputs: Readonly<TInputs>) {
 
   if (inputs.qrcode) {
     embed.thumbnail = {
-      url: 'attachment://actionqrcode.png',
-    };
+      url: `https://avatar1.vercel.app/qr/${encodeURIComponent(inputs.qrcode)}`
+    }
   }
 
-  const form = new FormData();
-
-  if (inputs.qrcode && typeof inputs.qrcode === 'string') {
-    const r = await renderBase64(inputs.qrcode) as string;
-
-    form.append(
-      'file[0]',
-      Buffer.from(r.replace('data:image/png;base64,', ''), 'base64'),
-      'actionqrcode.png'
-    );
-  }
-
-  form.append(
-    'payload_json',
-    JSON.stringify({
-      embeds: [fitEmbed(embed)],
-    })
-  );
+  let discord_payload: any = {
+    embeds: [fitEmbed(embed)],
+  };
 
   logDebug(`embed: ${JSON.stringify(embed)}`);
 
@@ -167,7 +150,7 @@ export async function getPayloadDiscord(inputs: Readonly<TInputs>) {
   //     discord_payload.content = fitContent(inputs.content)
   // }
 
-  return form;
+  return discord_payload;
 }
 
 export function getPayloadSlack(inputs: Readonly<TInputs>): Object {
@@ -189,7 +172,7 @@ export function getPayloadSlack(inputs: Readonly<TInputs>): Object {
 
   if (inputs.description) description = inputs.description;
 
-  const slack_payload = {
+  const slack_payload: any = {
     username: inputs.slack_username || 'Notifications',
     attachments: [
       {
@@ -228,6 +211,10 @@ export function getPayloadSlack(inputs: Readonly<TInputs>): Object {
       },
     ],
   };
+
+  if (inputs.qrcode) {
+    slack_payload.attachments[0].image_url = `https://avatar1.vercel.app/qr/${encodeURIComponent(inputs.qrcode)}`
+  }
 
   return slack_payload;
 }
