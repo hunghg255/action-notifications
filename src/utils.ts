@@ -253,7 +253,7 @@ export function getPayloadTelegram(inputs: Readonly<TInputs>): Object {
   };
 
   if (inputs.qrcode) {
-    telegram_payload.text =  telegram_payload.text + `\n![QR Code](https://avatar1.vercel.app/qr/${encodeURIComponent(inputs.qrcode)})`
+    telegram_payload.photo = `https://avatar1.vercel.app/qr/${encodeURIComponent(inputs.qrcode)}`
   }
 
   if (inputs.telegram_message_thread_id) {
