@@ -1,4 +1,16 @@
-# Github actions notification to Discord, Slack, Telegram, Google chat, Microsoft Teams
+<p align="center">
+<a href="https://www.npmjs.com/package/action-notifications" target="_blank" rel="noopener noreferrer">
+<img src="https://api.iconify.design/simple-icons:githubactions.svg?color=%23cefdb4" alt="logo" width='100'/></a>
+</p>
+
+<p align="center">
+  A Github actions notification to Discord, Slack, Telegram, Google chat, Microsoft Teams
+</p>
+
+<p align="center">
+  <a href="https://github.com/hunghg255/action-notifications/graphs/contributors" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/all_contributors-1-orange.svg" alt="Contributors" /></a>
+  <a href="https://github.com/hunghg255/action-notifications/blob/main/LICENSE" target="_blank" rel="noopener noreferrer"><img src="https://badgen.net/github/license/hunghg255/action-notifications" alt="License" /></a>
+</p>
 
 ---
 
@@ -13,7 +25,7 @@ with:
   slack_webhook: ${{ secrets.SLACK_WEBHOOK }}
   telegram_bot_token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
   telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
-  telegram_message_thread_id: ${{ secrets.TELEGRAM_MESSAGE_THREAD_ID }}
+  # telegram_message_thread_id: ${{ secrets.TELEGRAM_MESSAGE_THREAD_ID }}
   google_chat_webhook: ${{ secrets.GOOGLE_CHAT_WEBHOOK }}
   ms_teams_webhook: ${{ secrets.MS_TEAMS_WEBHOOK }}
   title: "Deploy to Dev"
@@ -65,7 +77,8 @@ jobs:
           slack_webhook: ${{ secrets.SLACK_WEBHOOK }}
           telegram_bot_token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
-          telegram_message_thread_id: ${{ secrets.TELEGRAM_MESSAGE_THREAD_ID }}
+          # Remove comment below for Telegram Topic Message
+          # telegram_message_thread_id: ${{ secrets.TELEGRAM_MESSAGE_THREAD_ID }}
           google_chat_webhook: ${{ secrets.GOOGLE_CHAT_WEBHOOK }}
           ms_teams_webhook: ${{ secrets.MS_TEAMS_WEBHOOK }}
           title: "Deploy to Dev"
@@ -84,7 +97,8 @@ jobs:
           slack_webhook: ${{ secrets.SLACK_WEBHOOK }}
           telegram_bot_token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
-          telegram_message_thread_id: ${{ secrets.TELEGRAM_MESSAGE_THREAD_ID }}
+          # Remove comment below for Telegram Topic Message
+          # telegram_message_thread_id: ${{ secrets.TELEGRAM_MESSAGE_THREAD_ID }}
           google_chat_webhook: ${{ secrets.GOOGLE_CHAT_WEBHOOK }}
           ms_teams_webhook: ${{ secrets.MS_TEAMS_WEBHOOK }}
           title: "Deploy to Dev"
