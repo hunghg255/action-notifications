@@ -4,17 +4,14 @@
 </p>
 
 <p align="center">
-  A Github actions notification to Discord, Slack, Telegram, Google chat, Microsoft Teams
+  A Github actions notification to Discord, Slack, Telegram, Google chat, Microsoft Teams, Support show QR code
 </p>
+
 
 <p align="center">
   <a href="https://github.com/hunghg255/action-notifications/graphs/contributors" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/all_contributors-1-orange.svg" alt="Contributors" /></a>
   <a href="https://github.com/hunghg255/action-notifications/blob/main/LICENSE" target="_blank" rel="noopener noreferrer"><img src="https://badgen.net/github/license/hunghg255/action-notifications" alt="License" /></a>
 </p>
-
----
-
-Fork from [actions-status-discord](https://github.com/sarisia/actions-status-discord)
 
 ## Usage
 
