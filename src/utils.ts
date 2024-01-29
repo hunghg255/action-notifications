@@ -252,6 +252,10 @@ export function getPayloadTelegram(inputs: Readonly<TInputs>): Object {
     parse_mode: 'MarkdownV2',
   };
 
+  if (inputs.qrcode) {
+    telegram_payload.text =  telegram_payload.text + `\n![QR Code](https://avatar1.vercel.app/qr/${encodeURIComponent(inputs.qrcode)})`
+  }
+
   if (inputs.telegram_message_thread_id) {
     telegram_payload = {
       ...telegram_payload,
