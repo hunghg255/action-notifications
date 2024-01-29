@@ -8,7 +8,7 @@ import {
   getPayloadSlack,
   getPayloadTelegram,
 } from './utils';
-import { TELEGRAM_SEND_PHOTO_URL } from './constants';
+import { TELEGRAM_SEND_PHOTO_URL, TELEGRAM_SEND_MSG_URL} from './constants';
 
 export class Notification {
   private inputs: TInputs;
@@ -61,8 +61,10 @@ export class Notification {
     try {
       const payload = getPayloadTelegram(this.inputs);
 
+      const url = this.inputs.qrcode ? TELEGRAM_SEND_PHOTO_URL(this.inputs.telegram_bot_token as string) : TELEGRAM_SEND_MSG_URL(this.inputs.telegram_bot_token as string);
+
       return axios.post(
-        TELEGRAM_SEND_PHOTO_URL(this.inputs.telegram_bot_token as string),
+        url,
         payload,
         {
           headers: {

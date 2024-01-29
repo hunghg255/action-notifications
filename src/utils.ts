@@ -242,7 +242,7 @@ export function getPayloadTelegram(inputs: Readonly<TInputs>): Object {
 
   let telegram_payload: any = {
     chat_id: inputs.telegram_chat_id,
-    caption: `${`*${escapeMarkdownUrl(title)}*\n${escapeMarkdownUrl(
+    text: `${`*${escapeMarkdownUrl(title)}*\n${escapeMarkdownUrl(
       description
     )}\n*Repository:* [${owner}/${escapeMarkdownUrl(repo)}](${escapeMarkdownUrl(
       repoURL
@@ -253,7 +253,9 @@ export function getPayloadTelegram(inputs: Readonly<TInputs>): Object {
   };
 
   if (inputs.qrcode) {
-    telegram_payload.photo = `https://avatar1.vercel.app/qr/${encodeURIComponent(inputs.qrcode)}`
+    telegram_payload.caption = telegram_payload.text;
+    telegram_payload.photo = `https://avatar1.vercel.app/qr/${encodeURIComponent(inputs.qrcode)}`;
+    delete telegram_payload.text;
   }
 
   if (inputs.telegram_message_thread_id) {
