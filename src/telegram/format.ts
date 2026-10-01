@@ -8,28 +8,12 @@ const formatters: Record<string, Formatter> = {
   release: releaseFormatter,
 };
 
-// https://core.telegram.org/bots/api#formatting-options
-//  '_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!'
-export function escapeMarkdownUrl(url: string) {
-  return url
-    .replace(/\_/g, '\\_')
-    .replace(/\*/g, '\\*')
-    .replace(/\[/g, '\\[')
-    .replace(/\]/g, '\\]')
-    .replace(/\(/g, '\\(')
-    .replace(/\)/g, '\\)')
-    .replace(/\~/g, '\\~')
-    .replace(/\`/g, '\\`')
-    .replace(/\>/g, '\\>')
-    .replace(/\#/g, '\\#')
-    .replace(/\+/g, '\\+')
-    .replace(/\-/g, '\\-')
-    .replace(/\=/g, '\\=')
-    .replace(/\|/g, '\\|')
-    .replace(/\{/g, '\\{')
-    .replace(/\}/g, '\\}')
-    .replace(/\./g, '\\.')
-    .replace(/\!/g, '\\!');
+// https://core.telegram.org/bots/api#html-style
+export function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 }
 
 export function formatEventTelegram(event: string, payload: Object): string {
@@ -47,21 +31,21 @@ export function formatEventTelegram(event: string, payload: Object): string {
 }
 
 function pushFormatter(payload: any): string {
-  return `[${payload.head_commit.id.substring(0, 7)}](${escapeMarkdownUrl(
-    payload.head_commit.url
-  )}) ${escapeMarkdownUrl(payload.head_commit.message)}`;
+  const message = payload.head_commit.message.split('\n')[0];
+  return `<a href="${payload.head_commit.url}"><code>${payload.head_commit.id.substring(
+    0,
+    7
+  )}</code></a> ${escapeHtml(message)}`;
 }
 
 function pullRequestFormatter(payload: any): string {
-  return `[${payload.pull_request.number}](${escapeMarkdownUrl(
-    payload.pull_request.html_url
-  )}) ${escapeMarkdownUrl(payload.pull_request.title)}`;
+  return `<a href="${payload.pull_request.html_url}">#${
+    payload.pull_request.number
+  }</a> ${escapeHtml(payload.pull_request.title)}`;
 }
 
 function releaseFormatter(payload: any): string {
   const { name, body } = payload.release;
-  const nameText = name ? `**${escapeMarkdownUrl(name)}**` : '';
-  return `${nameText}${nameText && body ? '\n' : ''}${
-    escapeMarkdownUrl(body) || ''
-  }`;
+  const nameText = name ? `<b>${escapeHtml(name)}</b>` : '';
+  return `${nameText}${nameText && body ? '\n' : ''}${escapeHtml(body || '')}`;
 }

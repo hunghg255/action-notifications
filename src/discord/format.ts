@@ -25,7 +25,7 @@ export function formatEvent(event: string, payload: Object): string {
 function pushFormatter(payload: any): string {
   return `[\`${payload.head_commit.id.substring(0, 7)}\`](${
     payload.head_commit.url
-  }) ${payload.head_commit.message}`;
+  }) ${payload.head_commit.message.split('\n')[0]}`;
 }
 
 function pullRequestFormatter(payload: any): string {

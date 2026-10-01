@@ -8,7 +8,7 @@ import {
   getPayloadSlack,
   getPayloadTelegram,
 } from './utils';
-import { TELEGRAM_SEND_PHOTO_URL, TELEGRAM_SEND_MSG_URL} from './constants';
+import { TELEGRAM_SEND_PHOTO_URL, TELEGRAM_SEND_MSG_URL } from './constants';
 
 export class Notification {
   private inputs: TInputs;
@@ -21,7 +21,8 @@ export class Notification {
     try {
       const payload = await getPayloadDiscord(this.inputs);
 
-      return axios.post(this.inputs.discord_webhook as string, payload);
+      await axios.post(this.inputs.discord_webhook as string, payload);
+      logInfo('Discord notification sent');
     } catch (e: any) {
       if (e.response) {
         logError(
@@ -35,15 +36,16 @@ export class Notification {
     }
   }
 
-  sendSlackNotification() {
+  async sendSlackNotification() {
     try {
       const payload = getPayloadSlack(this.inputs);
-      logInfo(JSON.stringify(payload, null, 2));
-      return axios.post(this.inputs.slack_webhook as string, payload, {
+
+      await axios.post(this.inputs.slack_webhook as string, payload, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
+      logInfo('Slack notification sent');
     } catch (e: any) {
       if (e.response) {
         logError(
@@ -57,21 +59,20 @@ export class Notification {
     }
   }
 
-  sendTelegramNotification() {
+  async sendTelegramNotification() {
     try {
       const payload = getPayloadTelegram(this.inputs);
 
-      const url = this.inputs.qrcode ? TELEGRAM_SEND_PHOTO_URL(this.inputs.telegram_bot_token as string) : TELEGRAM_SEND_MSG_URL(this.inputs.telegram_bot_token as string);
+      const url = this.inputs.qrcode
+        ? TELEGRAM_SEND_PHOTO_URL(this.inputs.telegram_bot_token as string)
+        : TELEGRAM_SEND_MSG_URL(this.inputs.telegram_bot_token as string);
 
-      return axios.post(
-        url,
-        payload,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      await axios.post(url, payload, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      logInfo('Telegram notification sent');
     } catch (e: any) {
       if (e.response) {
         logError(
@@ -85,15 +86,16 @@ export class Notification {
     }
   }
 
-  sendGoogleChatNotification() {
+  async sendGoogleChatNotification() {
     try {
       const payload = getPayloadGoogleChat(this.inputs);
 
-      return axios.post(this.inputs.google_chat_webhook as string, payload, {
+      await axios.post(this.inputs.google_chat_webhook as string, payload, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
+      logInfo('Google Chat notification sent');
     } catch (e: any) {
       if (e.response) {
         logError(
@@ -107,15 +109,16 @@ export class Notification {
     }
   }
 
-  sendMsTeamsNotification() {
+  async sendMsTeamsNotification() {
     try {
       const payload = getPayloadMsTeams(this.inputs);
 
-      return axios.post(this.inputs.ms_teams_webhook as string, payload, {
+      await axios.post(this.inputs.ms_teams_webhook as string, payload, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
+      logInfo('MS Teams notification sent');
     } catch (e: any) {
       if (e.response) {
         logError(

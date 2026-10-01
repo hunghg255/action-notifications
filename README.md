@@ -29,6 +29,17 @@ with:
   description: "Test here: https://hung.thedev.id"
 ```
 
+## What's in a notification
+
+Every notification includes, with a status color and emoji (✅ Success / ❌ Failure / ⚠️ Cancelled):
+
+- Repository (linked)
+- Branch or tag (linked)
+- Commit SHA (linked)
+- Event detail (commit message, PR title, or release notes)
+- Who triggered the run (with avatar on Discord)
+- Workflow name and run number, linked to the run
+
 ## Inputs
 | Properties                   | Description                       |                              |
 | ---------------------------- | --------------------------------- | :--------------------------- |
