@@ -40,6 +40,49 @@ Every notification includes, with a status color and emoji (✅ Success / ❌ Fa
 - Who triggered the run (with avatar on Discord)
 - Workflow name and run number, linked to the run
 
+## Runtime Compatibility
+
+- Action runtime: `node24` (defined by GitHub Action metadata in `action.yml`).
+- Development and CI: Node.js 24.
+
+For local development:
+
+```bash
+nvm use 24
+npm ci
+npm run type-check
+npm test
+npm run build
+```
+
+## Local Discord Test Script
+
+Use `scripts/test-discord-local.js` to validate Discord payload formatting and delivery without running a full GitHub Actions workflow.
+
+Usage:
+
+```bash
+node scripts/test-discord-local.js <webhook_url> [title] [description]
+```
+
+Example:
+
+```bash
+node scripts/test-discord-local.js "https://discord.com/api/webhooks/..." "Node 24 Upgrade Test" "Testing Discord notification from local script"
+```
+
+What the script does:
+
+- Builds a mock GitHub context (`push` event, repository, actor, workflow run link).
+- Generates a Discord embed payload aligned with the action formatting logic.
+- Sends the payload to the provided webhook URL using `axios`.
+- Exits with code `0` on success and `1` on failure.
+
+Security note:
+
+- Treat webhook URLs as secrets.
+- If a webhook URL is ever shared publicly, rotate it immediately in Discord.
+
 ## Inputs
 | Properties                   | Description                       |                              |
 | ---------------------------- | --------------------------------- | :--------------------------- |
