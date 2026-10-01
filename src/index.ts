@@ -2,7 +2,7 @@ import { setFailed } from '@actions/core'
 import { getInputs } from './utils';
 import { Notification } from './notification';
 
-function main() {
+async function main() {
   try {
     const inputs = getInputs();
 
@@ -12,12 +12,14 @@ function main() {
       setFailed('You must provide at least one webhook.')
     }
 
+    const jobs: Promise<void>[] = [];
+
     if (inputs.discord_webhook) {
-      notification.sendDiscordNotification();
+      jobs.push(notification.sendDiscordNotification());
     }
 
     if (inputs.slack_webhook) {
-      notification.sendSlackNotification();
+      jobs.push(notification.sendSlackNotification());
     }
 
     if (inputs.telegram_bot_token) {
@@ -26,18 +28,19 @@ function main() {
       }
 
       if (inputs.telegram_chat_id) {
-        notification.sendTelegramNotification();
+        jobs.push(notification.sendTelegramNotification());
       }
     }
 
     if (inputs.google_chat_webhook) {
-      notification.sendGoogleChatNotification();
+      jobs.push(notification.sendGoogleChatNotification());
     }
 
     if (inputs.ms_teams_webhook) {
-      notification.sendMsTeamsNotification();
+      jobs.push(notification.sendMsTeamsNotification());
     }
 
+    await Promise.all(jobs);
   } catch (error: any) {
     setFailed(error.message)
   }

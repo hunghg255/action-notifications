@@ -22,19 +22,30 @@ export function formatEventSlack(event: string, payload: Object): string {
   return msg;
 }
 
+// https://docs.slack.dev/messaging/formatting-message-text#escaping
+function escapeSlackText(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
 function pushFormatter(payload: any): string {
-  return `<${payload.head_commit.url}|${payload.head_commit.id.substring(
+  const message = payload.head_commit.message.split('\n')[0];
+  return `<${payload.head_commit.url}|\`${payload.head_commit.id.substring(
     0,
     7
-  )}> ${payload.head_commit.message}`;
+  )}\`> ${escapeSlackText(message)}`;
 }
 
 function pullRequestFormatter(payload: any): string {
-  return `<${payload.pull_request.html_url}|${payload.pull_request.number}> ${payload.pull_request.title}`;
+  return `<${payload.pull_request.html_url}|#${payload.pull_request.number}> ${escapeSlackText(
+    payload.pull_request.title
+  )}`;
 }
 
 function releaseFormatter(payload: any): string {
   const { name, body } = payload.release;
-  const nameText = name ? `**${name}**` : '';
-  return `${nameText}${nameText && body ? '\n' : ''}${body || ''}`;
+  const nameText = name ? `*${escapeSlackText(name)}*` : '';
+  return `${nameText}${nameText && body ? '\n' : ''}${escapeSlackText(body || '')}`;
 }

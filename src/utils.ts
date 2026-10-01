@@ -5,26 +5,92 @@ import { logDebug } from './logs';
 import { formatEvent } from './discord/format';
 import { fitEmbed } from './validate';
 import { formatEventSlack } from './slack/format';
-import { formatEventTelegram, escapeMarkdownUrl } from './telegram/format';
+import { formatEventTelegram, escapeHtml } from './telegram/format';
 import { formatEventGoogleChat } from './google-chat/format';
 
 export const statusOpts: Record<string, any> = {
   success: {
     status: 'Success',
+    emoji: '✅',
     color: 0x28a745,
     color_hex: '#28a745',
   },
   failure: {
     status: 'Failure',
+    emoji: '❌',
     color: 0xcb2431,
     color_hex: '#cb2431',
   },
   cancelled: {
     status: 'Cancelled',
+    emoji: '⚠️',
     color: 0xdbab09,
     color_hex: '#dbab09',
   },
 };
+
+export function getStatusOpt(status?: string) {
+  return (
+    statusOpts[(status || '').toLowerCase()] || {
+      status: status || 'Unknown',
+      emoji: 'ℹ️',
+      color: 0x768390,
+      color_hex: '#768390',
+    }
+  );
+}
+
+export function getActionCtx() {
+  const ctx = github.context;
+  const { owner, repo } = ctx.repo;
+  const { eventName, workflow, actor, payload, serverUrl, runId, sha } = ctx;
+  const ref = ctx.ref || '';
+  const runNumber = (ctx as any).runNumber ?? process.env.GITHUB_RUN_NUMBER ?? '';
+
+  const repoURL = `${serverUrl}/${owner}/${repo}`;
+  const workflowURL = `${repoURL}/actions/runs/${runId}`;
+  const commitURL = `${repoURL}/commit/${sha}`;
+  const shortSha = (sha || '').substring(0, 7);
+  const actorURL = `${serverUrl}/${actor}`;
+  const actorAvatarURL = `${serverUrl}/${actor}.png?size=64`;
+
+  const isTag = ref.startsWith('refs/tags/');
+  let branch = ref.replace(/^refs\/(heads|tags)\//, '');
+  let refLabel = isTag ? 'Tag' : 'Branch';
+  if (
+    (eventName === 'pull_request' || eventName === 'pull_request_target') &&
+    payload?.pull_request?.head?.ref
+  ) {
+    branch = payload.pull_request.head.ref;
+    refLabel = 'Branch';
+  }
+  const branchURL = isTag
+    ? `${repoURL}/releases/tag/${branch}`
+    : `${repoURL}/tree/${branch}`;
+
+  return {
+    owner,
+    repo,
+    eventName,
+    ref,
+    workflow,
+    actor,
+    payload,
+    serverUrl,
+    runId,
+    runNumber,
+    sha,
+    repoURL,
+    workflowURL,
+    commitURL,
+    shortSha,
+    actorURL,
+    actorAvatarURL,
+    branch,
+    branchURL,
+    refLabel,
+  };
+}
 
 const textButton = (text: string, url: string) => ({
   textButton: {
@@ -46,7 +112,6 @@ export const getInputs = (): TInputs => {
   const title = getInput('title').trim() || '';
   const description = getInput('description').trim() || '';
   const qrcode = getInput('qrcode').trim() || '';
-  telegram_bot_token;
 
   return {
     discord_webhook,
@@ -65,38 +130,44 @@ export const getInputs = (): TInputs => {
 };
 
 export async function getPayloadDiscord(inputs: Readonly<TInputs>) {
-  const ctx = github.context;
-  const { owner, repo } = ctx.repo;
-  const { eventName, ref, workflow, actor, payload, serverUrl, runId } = ctx;
-  const repoURL = `${serverUrl}/${owner}/${repo}`;
-  const workflowURL = `${repoURL}/actions/runs/${runId}`;
+  const {
+    owner,
+    repo,
+    eventName,
+    workflow,
+    actor,
+    payload,
+    runNumber,
+    repoURL,
+    workflowURL,
+    commitURL,
+    shortSha,
+    actorURL,
+    actorAvatarURL,
+    branch,
+    branchURL,
+    refLabel,
+  } = getActionCtx();
 
   logDebug(JSON.stringify(payload));
 
-  const eventFieldTitle = `Event - ${eventName}`;
+  const statusOpt = getStatusOpt(inputs.status);
   const eventDetail = formatEvent(eventName, payload);
 
-  let embed: { [key: string]: any } = {
-    color: statusOpts[inputs.status as any].color,
+  const embed: { [key: string]: any } = {
+    color: statusOpt.color,
+    timestamp: new Date().toISOString(),
+    title: `${statusOpt.emoji} ${statusOpt.status}${inputs.title ? `: ${inputs.title}` : ''}`,
+    url: workflowURL,
+    author: {
+      name: actor,
+      url: actorURL,
+      icon_url: actorAvatarURL,
+    },
+    footer: {
+      text: `${workflow} #${runNumber}`,
+    },
   };
-
-  embed.timestamp = new Date().toISOString();
-  embed.title = inputs.title;
-
-  // if (inputs.url) {
-  // embed.url = 'URL'
-  // }
-
-  // if (inputs.image) {
-  //     embed.image = {
-  //         url: inputs.image
-  //     }
-  // }
-
-  embed.title =
-    statusOpts[inputs.status as any].status +
-    (embed.title ? `: ${embed.title}` : '');
-
 
   if (inputs.description) embed.description = inputs.description;
 
@@ -107,191 +178,231 @@ export async function getPayloadDiscord(inputs: Readonly<TInputs>) {
       inline: true,
     },
     {
-      name: 'Ref',
-      value: ref,
+      name: refLabel,
+      value: `[\`${branch}\`](${branchURL})`,
       inline: true,
     },
     {
-      name: eventFieldTitle,
+      name: 'Commit',
+      value: shortSha ? `[\`${shortSha}\`](${commitURL})` : '—',
+      inline: true,
+    },
+    {
+      name: `Event — ${eventName}`,
       value: eventDetail,
       inline: false,
     },
     {
-      name: 'Triggered by',
-      value: actor,
+      name: 'Workflow',
+      value: `[${workflow} #${runNumber}](${workflowURL})`,
       inline: true,
     },
     {
-      name: 'Workflow',
-      value: `[${workflow}](${workflowURL})`,
+      name: 'Triggered by',
+      value: `[${actor}](${actorURL})`,
       inline: true,
     },
   ];
 
   if (inputs.qrcode) {
     embed.thumbnail = {
-      url: `https://avatar1.vercel.app/qr/${encodeURIComponent(inputs.qrcode)}`
-    }
+      url: `https://avatar1.vercel.app/qr/${encodeURIComponent(inputs.qrcode)}`,
+    };
   }
 
-  let discord_payload: any = {
+  const discord_payload: any = {
     embeds: [fitEmbed(embed)],
   };
 
   logDebug(`embed: ${JSON.stringify(embed)}`);
 
-  // if (inputs.username) {
-  //     discord_payload.username = inputs.username
-  // }
-  // if (inputs.avatar_url) {
-  //     discord_payload.avatar_url = inputs.avatar_url
-  // }
-  // if (inputs.content) {
-  //     discord_payload.content = fitContent(inputs.content)
-  // }
-
   return discord_payload;
 }
 
-export function getPayloadSlack(inputs: Readonly<TInputs>): Object {
-  const ctx = github.context;
-  const { owner, repo } = ctx.repo;
-  const { eventName, ref, workflow, actor, payload, serverUrl, runId } = ctx;
-  const repoURL = `${serverUrl}/${owner}/${repo}`;
-  const workflowURL = `${repoURL}/actions/runs/${runId}`;
+function escapeSlack(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
 
-  const eventFieldTitle = `Event - ${eventName}`;
+export function getPayloadSlack(inputs: Readonly<TInputs>): Object {
+  const {
+    owner,
+    repo,
+    eventName,
+    workflow,
+    actor,
+    payload,
+    runNumber,
+    repoURL,
+    workflowURL,
+    commitURL,
+    shortSha,
+    actorURL,
+    branch,
+    branchURL,
+    refLabel,
+  } = getActionCtx();
+
+  const statusOpt = getStatusOpt(inputs.status);
   const eventDetail = formatEventSlack(eventName, payload);
 
-  const title =
-    statusOpts[inputs.status as any].status +
-    (inputs.title ? `: ${inputs.title}` : '');
-  const timestamp = new Date().getTime();
+  const title = `${statusOpt.status}${inputs.title ? `: ${escapeSlack(inputs.title)}` : ''}`;
 
-  let description = '';
+  let headline = `${statusOpt.emoji} *<${workflowURL}|${title}>*`;
+  if (inputs.description) headline += `\n${escapeSlack(inputs.description)}`;
 
-  if (inputs.description) description = inputs.description;
+  const blocks: any[] = [
+    {
+      type: 'section',
+      text: { type: 'mrkdwn', text: headline },
+    },
+    {
+      type: 'section',
+      fields: [
+        `*Repository:*\n<${repoURL}|${owner}/${repo}>`,
+        `*${refLabel}:*\n<${branchURL}|\`${branch}\`>`,
+        `*Commit:*\n${shortSha ? `<${commitURL}|\`${shortSha}\`>` : '—'}`,
+        `*Triggered by:*\n<${actorURL}|${actor}>`,
+      ].map((text) => ({ type: 'mrkdwn', text })),
+    },
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: `*Event — ${eventName}:*\n${eventDetail}`,
+      },
+    },
+  ];
+
+  if (inputs.qrcode) {
+    blocks.push({
+      type: 'image',
+      image_url: `https://avatar1.vercel.app/qr/${encodeURIComponent(inputs.qrcode)}`,
+      alt_text: 'QR code',
+    });
+  }
+
+  blocks.push({
+    type: 'context',
+    elements: [
+      {
+        type: 'mrkdwn',
+        text: `⚙️ <${workflowURL}|${workflow} #${runNumber}> • <!date^${Math.floor(
+          Date.now() / 1000
+        )}^{date_short_pretty} {time}|${new Date().toISOString()}>`,
+      },
+    ],
+  });
 
   const slack_payload: any = {
     username: inputs.slack_username || 'Notifications',
     attachments: [
       {
-        mrkdwn_in: ['text'],
-        color: statusOpts[inputs.status as any].color_hex,
-        title: title,
-        text: description,
-        fields: [
-          {
-            title: 'Repository',
-            value: `<${repoURL}|${owner}/${repo}>`,
-            short: true,
-          },
-          {
-            title: 'Ref',
-            value: ref,
-            short: true,
-          },
-          {
-            title: eventFieldTitle,
-            value: eventDetail,
-            short: false,
-          },
-          {
-            title: 'Triggered by',
-            value: actor,
-            short: true,
-          },
-          {
-            title: 'Workflow',
-            value: `<${workflowURL}|${workflow}>`,
-            short: true,
-          },
-        ],
-        ts: timestamp,
+        color: statusOpt.color_hex,
+        fallback: `${statusOpt.emoji} ${title} — ${owner}/${repo} (${branch})`,
+        blocks,
       },
     ],
   };
-
-  if (inputs.qrcode) {
-    slack_payload.attachments[0].image_url = `https://avatar1.vercel.app/qr/${encodeURIComponent(inputs.qrcode)}`
-  }
 
   return slack_payload;
 }
 
 export function getPayloadTelegram(inputs: Readonly<TInputs>): Object {
-  const ctx = github.context;
-  const { owner, repo } = ctx.repo;
-  const { eventName, ref, workflow, actor, payload, serverUrl, runId } = ctx;
-  const repoURL = `${serverUrl}/${owner}/${repo}`;
-  const workflowURL = `${repoURL}/actions/runs/${runId}`;
+  const {
+    owner,
+    repo,
+    eventName,
+    workflow,
+    actor,
+    payload,
+    runNumber,
+    repoURL,
+    workflowURL,
+    commitURL,
+    shortSha,
+    actorURL,
+    branch,
+    refLabel,
+  } = getActionCtx();
 
   logDebug(JSON.stringify(payload));
 
-  const eventFieldTitle = `Event \\- ${eventName}`;
+  const statusOpt = getStatusOpt(inputs.status);
   const eventDetail = formatEventTelegram(eventName, payload);
 
-  const title =
-    statusOpts[inputs.status as any].status +
-    (inputs.title ? `: ${inputs.title}` : '');
+  const title = `${statusOpt.status}${inputs.title ? `: ${inputs.title}` : ''}`;
 
-  let description = '';
+  const lines: string[] = [
+    `${statusOpt.emoji} <b>${escapeHtml(title)}</b>`,
+  ];
 
-  if (inputs.description) description = inputs.description;
+  if (inputs.description) {
+    lines.push('', escapeHtml(inputs.description));
+  }
 
+  lines.push(
+    '',
+    `📦 <b>Repository:</b> <a href="${repoURL}">${escapeHtml(`${owner}/${repo}`)}</a>`,
+    `🌿 <b>${refLabel}:</b> <code>${escapeHtml(branch)}</code>`,
+    `🔖 <b>Commit:</b> ${shortSha ? `<a href="${commitURL}"><code>${shortSha}</code></a>` : '—'}`,
+    `📣 <b>Event — ${escapeHtml(eventName)}:</b> ${eventDetail}`,
+    `👤 <b>Triggered by:</b> <a href="${actorURL}">${escapeHtml(actor)}</a>`,
+    `⚙️ <b>Workflow:</b> <a href="${workflowURL}">${escapeHtml(workflow)} #${runNumber}</a>`
+  );
+
+  const text = lines.join('\n');
 
   let telegram_payload: any = {
     chat_id: inputs.telegram_chat_id,
-    text: `${`*${escapeMarkdownUrl(title)}*\n${escapeMarkdownUrl(
-      description
-    )}\n*Repository:* [${escapeMarkdownUrl(owner)}/${escapeMarkdownUrl(repo)}](${escapeMarkdownUrl(
-      repoURL
-    )})\n*Ref:* ${ref}\n*${eventFieldTitle}:* ${eventDetail}\n*Triggered by:* ${actor}\n*Workflow:* [${escapeMarkdownUrl(
-      workflow
-    )}](${escapeMarkdownUrl(workflowURL)})`}`,
-    parse_mode: 'MarkdownV2',
+    text,
+    parse_mode: 'HTML',
+    disable_web_page_preview: true,
   };
 
   if (inputs.qrcode) {
-    telegram_payload.caption = telegram_payload.text;
+    // Telegram photo captions are limited to 1024 characters
+    telegram_payload.caption = text.length > 1024 ? `${text.slice(0, 1021)}...` : text;
     telegram_payload.photo = `https://avatar1.vercel.app/qr/${encodeURIComponent(inputs.qrcode)}`;
     delete telegram_payload.text;
+    delete telegram_payload.disable_web_page_preview;
   }
 
   if (inputs.telegram_message_thread_id) {
     telegram_payload = {
       ...telegram_payload,
-      message_thread_id: inputs.telegram_message_thread_id
-    }
+      message_thread_id: inputs.telegram_message_thread_id,
+    };
   }
 
   return telegram_payload;
 }
 
 export function getPayloadGoogleChat(inputs: Readonly<TInputs>): Object {
-  const ctx = github.context;
-  const { owner, repo } = ctx.repo;
-  const { eventName, ref, workflow, actor, payload, serverUrl, runId } = ctx;
-  const repoURL = `${serverUrl}/${owner}/${repo}`;
-  const workflowURL = `${repoURL}/actions/runs/${runId}`;
+  const {
+    owner,
+    repo,
+    eventName,
+    workflow,
+    actor,
+    payload,
+    runNumber,
+    repoURL,
+    workflowURL,
+    commitURL,
+    shortSha,
+    branch,
+    refLabel,
+  } = getActionCtx();
 
   logDebug(JSON.stringify(payload));
 
-  const eventFieldTitle = `Event - ${eventName}`;
+  const statusOpt = getStatusOpt(inputs.status);
   const eventDetail = formatEventGoogleChat(eventName, payload);
 
-  let embed: { [key: string]: any } = {
-    color: statusOpts[inputs.status as any].color_hex,
-  };
-
-  embed.timestamp = new Date().toISOString();
-  embed.title = inputs.title;
-
-  embed.title =
-    statusOpts[inputs.status as any].status +
-    (embed.title ? `: ${embed.title}` : '');
-
-  if (inputs.description) embed.description = inputs.description;
+  const title = `${statusOpt.emoji} ${statusOpt.status}${inputs.title ? `: ${inputs.title}` : ''}`;
 
   const payload_gg = {
     cards: [
@@ -301,12 +412,12 @@ export function getPayloadGoogleChat(inputs: Readonly<TInputs>): Object {
             widgets: [
               {
                 textParagraph: {
-                  text: `<b><font color="${embed.color}">${embed.title}</font></b>`,
+                  text: `<b><font color="${statusOpt.color_hex}">${title}</font></b>`,
                 },
               },
               {
                 textParagraph: {
-                  text: embed.description,
+                  text: inputs.description || '',
                 },
               },
             ],
@@ -322,11 +433,18 @@ export function getPayloadGoogleChat(inputs: Readonly<TInputs>): Object {
                 },
               },
               {
-                keyValue: { topLabel: 'ref', content: ref },
+                keyValue: { topLabel: refLabel, content: branch },
               },
               {
                 keyValue: {
-                  topLabel: eventFieldTitle,
+                  topLabel: 'Commit',
+                  content: shortSha || '—',
+                  button: textButton('Open Commit', commitURL),
+                },
+              },
+              {
+                keyValue: {
+                  topLabel: `Event — ${eventName}`,
                   content: eventDetail.text,
                   contentMultiline: true,
                   button: textButton('Open Event', eventDetail.url || repoURL),
@@ -338,7 +456,7 @@ export function getPayloadGoogleChat(inputs: Readonly<TInputs>): Object {
               {
                 keyValue: {
                   topLabel: 'Workflow',
-                  content: workflow,
+                  content: `${workflow} #${runNumber}`,
                   contentMultiline: true,
                   button: textButton('Open Workflow', workflowURL),
                 },
@@ -354,29 +472,37 @@ export function getPayloadGoogleChat(inputs: Readonly<TInputs>): Object {
 }
 
 export function getPayloadMsTeams(inputs: Readonly<TInputs>): Object {
-  const ctx = github.context;
-  const { owner, repo } = ctx.repo;
-  const { eventName, ref, workflow, actor, payload, serverUrl, runId } = ctx;
-  const repoURL = `${serverUrl}/${owner}/${repo}`;
-  const workflowURL = `${repoURL}/actions/runs/${runId}`;
+  const {
+    owner,
+    repo,
+    eventName,
+    workflow,
+    actor,
+    payload,
+    runNumber,
+    repoURL,
+    workflowURL,
+    commitURL,
+    shortSha,
+    branch,
+    refLabel,
+  } = getActionCtx();
 
   logDebug(JSON.stringify(payload));
 
-  const eventFieldTitle = `Event - ${eventName}`;
+  const statusOpt = getStatusOpt(inputs.status);
   const eventDetail = formatEvent(eventName, payload);
 
-  let embed: { [key: string]: any } = {
-    color: statusOpts[inputs.status as any].color_hex,
-  };
+  const title = `${statusOpt.emoji} ${statusOpt.status}${inputs.title ? `: ${inputs.title}` : ''}`;
 
-  embed.timestamp = new Date().toISOString();
-  embed.title = inputs.title;
-
-  embed.title =
-    statusOpts[inputs.status as any].status +
-    (embed.title ? `: ${embed.title}` : '');
-
-  if (inputs.description) embed.description = inputs.description;
+  const facts = [
+    `<strong>Repository:</strong> [${owner}/${repo}](${repoURL})`,
+    `<strong>${refLabel}:</strong> \`${branch}\``,
+    `<strong>Commit:</strong> ${shortSha ? `[\`${shortSha}\`](${commitURL})` : '—'}`,
+    `<strong>Event — ${eventName}:</strong> ${eventDetail}`,
+    `<strong>Triggered by:</strong> ${actor}`,
+    `<strong>Workflow:</strong> [${workflow} #${runNumber}](${workflowURL})`,
+  ];
 
   const payload_ms_teams = {
     type: 'message',
@@ -386,16 +512,16 @@ export function getPayloadMsTeams(inputs: Readonly<TInputs>): Object {
         content: {
           '@type': 'MessageCard',
           '@context': 'https://schema.org/extensions',
-          summary: 'Summary',
-          themeColor: embed.color,
-          title: embed.title,
+          summary: title,
+          themeColor: statusOpt.color_hex,
+          title,
           sections: [
             {
-              text: embed.description,
+              text: inputs.description || '',
               wrap: true,
             },
             {
-              text: `<strong>Repository:</strong> [${owner}/${repo}](${repoURL})<br /><strong>Ref:</strong> ${ref}<br/><strong>${eventFieldTitle}:</strong> ${eventDetail}<br/><strong>Triggered by:</strong> ${actor}<br /><strong>Workflow:</strong> [${workflow}](${workflowURL})`,
+              text: facts.join('<br />'),
               wrap: true,
             },
           ],
